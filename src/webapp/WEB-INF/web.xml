@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+                      https://jakarta.ee/xml/ns/jakartaee/web-app_3_0.xsd"
+  version="3.0"
+>
+
+<welcome-file-list>
+<welcome-file>index.jsp</welcome-file>
+</welcome-file-list>
+
+
+<servlet>
+    <servlet-name>api_test</servlet-name>
+    <servlet-class>gjt.usblab.API.testAPI</servlet-class>
+</servlet>
+
+<servlet-mapping>
+    <servlet-name>api_test</servlet-name>
+    <url-pattern>/api/test</url-pattern>
+</servlet-mapping> 
+
+<servlet>
+    <servlet-name>iteminfo</servlet-name>
+    <servlet-class>gjt.usblab.Servlet.itemInfo</servlet-class>
+</servlet>
+
+<servlet-mapping>
+    <servlet-name>iteminfo</servlet-name>
+    <url-pattern>/item</url-pattern>
+</servlet-mapping> 
+
+
+<servlet>
+    <servlet-name>api_log</servlet-name>
+    <servlet-class>gjt.usblab.API.refreshAPI</servlet-class>
+</servlet>
+
+<servlet-mapping>
+    <servlet-name>api_log</servlet-name>
+    <url-pattern>/api/logs</url-pattern>
+</servlet-mapping> 
+
+<servlet>
+    <servlet-name>api_list</servlet-name>
+    <servlet-class>gjt.usblab.API.listElement</servlet-class>
+</servlet>
+
+<servlet-mapping>
+    <servlet-name>api_list</servlet-name>
+    <url-pattern>/api/lists</url-pattern>
+</servlet-mapping> 
+
+
+<servlet>
+    <servlet-name>pbupdate</servlet-name>
+    <servlet-class>gjt.usblab.API.pbUpdateAPI</servlet-class>
+</servlet>
+
+<servlet-mapping>
+    <servlet-name>pbupdate</servlet-name>
+    <url-pattern>/api/pbupdate</url-pattern>
+</servlet-mapping> 
+
+
+<servlet>
+    <servlet-name>picking</servlet-name>
+    <servlet-class>gjt.usblab.API.pickingpanelAPI</servlet-class>
+</servlet>
+
+<servlet-mapping>
+    <servlet-name>picking</servlet-name>
+    <url-pattern>/api/picking</url-pattern>
+</servlet-mapping>
+
+<servlet>
+    <servlet-name>addItem</servlet-name>
+    <servlet-class>gjt.usblab.API.addItem</servlet-class>
+</servlet>
+
+<servlet-mapping>
+    <servlet-name>addItem</servlet-name>
+    <url-pattern>/api/addItem</url-pattern>
+</servlet-mapping>
+
+<servlet>
+    <servlet-name>turnOffLED</servlet-name>
+    <servlet-class>gjt.usblab.API.turnOffLED</servlet-class>
+</servlet>
+
+<servlet-mapping>
+    <servlet-name>turnOffLED</servlet-name>
+    <url-pattern>/api/turnOffLED</url-pattern>
+</servlet-mapping>
+
+
+<servlet>
+    <servlet-name>prebor</servlet-name>
+    <servlet-class>gjt.usblab.API.listPreBorrowAPI</servlet-class>
+</servlet>
+
+<servlet-mapping>
+    <servlet-name>prebor</servlet-name>
+    <url-pattern>/api/listborrow</url-pattern>
+</servlet-mapping> 
+
+
+
+<servlet>
+    <servlet-name>logs</servlet-name>
+    <servlet-class>gjt.usblab.Servlet.logs</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>logs</servlet-name>
+  <url-pattern>/logs</url-pattern>
+</servlet-mapping>
+
+<servlet>
+    <servlet-name>sendBorrowServlet</servlet-name>
+    <servlet-class>gjt.usblab.Servlet.sendBorrowServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>sendBorrowServlet</servlet-name>
+  <url-pattern>/confirmBorrow</url-pattern>
+</servlet-mapping>
+
+
+
+
+
+<servlet>
+    <servlet-name>lend</servlet-name>
+    <servlet-class>gjt.usblab.Servlet.lendServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>lend</servlet-name>
+  <url-pattern>/lend</url-pattern>
+</servlet-mapping>
+
+
+
+<servlet>
+    <servlet-name>login</servlet-name>
+    <servlet-class>gjt.usblab.Servlet.LoginServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>login</servlet-name>
+  <url-pattern>/LoginServlet</url-pattern>
+</servlet-mapping>
+
+
+<servlet>
+    <servlet-name>logout</servlet-name>
+    <servlet-class>gjt.usblab.Servlet.LogoutServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>logout</servlet-name>
+  <url-pattern>/logout</url-pattern>
+</servlet-mapping>
+
+
+
+
+<locale-encoding-mapping-list>
+    <locale-encoding-mapping>
+        <locale>zh_TW</locale>
+        <encoding>UTF-8</encoding>
+    </locale-encoding-mapping>
+</locale-encoding-mapping-list>
+
+<error-page>
+ <error-code>404</error-code>
+ <location>/error_page</location>
+</error-page>
+<error-page>
+ <error-code>403</error-code>
+ <location>/error_page</location>
+</error-page> 
+<jsp-config>
+    <jsp-property-group>
+        <url-pattern>*.jsp</url-pattern>
+        <page-encoding>UTF-8</page-encoding>
+    </jsp-property-group>
+</jsp-config>
+</web-app>
