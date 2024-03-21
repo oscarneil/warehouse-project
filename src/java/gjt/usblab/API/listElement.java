@@ -1,5 +1,6 @@
 package gjt.usblab.API;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -52,11 +53,11 @@ public class listElement  extends HttpServlet {
 
 
         ret = Server.getInstance().sqlConnection.cmdFetchData(
-            "SELECT shID,RegisterItem.RiNo,RegisterItem.Name,RegisterItem.filename,count from RegisterItem INNER JOIN Consumables on RegisterItem.RiNo = Consumables.RiNo INNER JOIN Shelf on RegisterItem.shNo = Shelf.shNo GROUP BY RegisterItem.RiNo",
+            "SELECT shID,RegisterItem.RiNo,RegisterItem.Name,RegisterItem.filename,SUM(count) as totalCount from RegisterItem INNER JOIN Consumables on RegisterItem.RiNo = Consumables.RiNo INNER JOIN Shelf on RegisterItem.shNo = Shelf.shNo GROUP BY RegisterItem.RiNo",
             "RiNo",
             "Name",
             "filename",
-            "count",
+            "totalCount",
             "shID");
         //SELECT RegisterItem.RiNo,RegisterItem.Name,RegisterItem.filename from RegisterItem INNER JOIN Consumables on RegisterItem.RiNo = Consumables.RiNo GROUP BY RegisterItem.RiNo
         for (HashMap<String,Object> obj : ret){
@@ -67,7 +68,7 @@ public class listElement  extends HttpServlet {
             itemData iData = new itemData(r_id, name, filename);
             iData.setShelfNo(shID);
             iData.setURL("item?type=consum&id="+r_id);
-            int ava_count = (int) obj.get("count");
+            int ava_count = ((BigDecimal) obj.get("totalCount")).intValue();
             iData.setCount(ava_count);
             datas.add( iData);
 
