@@ -194,20 +194,24 @@ public class SQLConnection {
         int ava = 0;
         // 對所有 於註冊物品 中的 庫存 在 Lend 中的 LendDate 為 非 null 
         try{
-            String query = "SELECT * FROM RegisterItem INNER JOIN Storage on RegisterItem.RiNo = Storage.RiNo INNER JOIN Lend on Storage.sNo = Lend.sNo Where Lend.ReturnDate IS NULL AND RegisterItem.RiNo = "+RegisterItemID + " group by Storage.sNo;";
+            String query = "SELECT * FROM RegisterItem INNER JOIN Storage on RegisterItem.RiNo = Storage.RiNo INNER JOIN Lend on Storage.sNo = Lend.sNo Where Lend.ReturnDate IS NULL AND RegisterItem.RiNo = "+RegisterItemID + " group by Storage.sNo, Lend.INo;";
             Connection connection = DatabaseConnection.getConnection();
             Statement state = connection.createStatement();
             ResultSet rs = state.executeQuery(query);
-            rs.last();
-            int len = rs.getRow();
+            int len = 0;
+            while (rs.next()) {
+                len++;
+            }
             rs.close();
             state.close();
 
-            query = "SELECT * FROM RegisterItem INNER JOIN Storage on RegisterItem.RiNo = Storage.RiNo Where RegisterItem.RiNo = "+RegisterItemID;
+            query = "SELECT SUM(count) as totalCount FROM RegisterItem  INNER JOIN Storage on RegisterItem.RiNo = Storage.RiNo Where RegisterItem.RiNo = "+RegisterItemID;
             state = connection.createStatement();
             rs = state.executeQuery(query);
-            rs.last();
-            int sz = rs.getInt("count");
+            int sz=0;
+            if(rs.next()){
+                sz = rs.getInt("totalCount");
+            }
             rs.close();
             state.close();
 
@@ -219,7 +223,7 @@ public class SQLConnection {
 
             connection.close();
         }catch(Exception e){
-
+            System.out.println("error SQL DB");
         }
         return ava;
     }

@@ -131,7 +131,7 @@ CREATE TABLE `Lend` (
   `INo` int(11) NOT NULL,
   `eNo` int(11) NOT NULL,
   `sNo` int(11) NOT NULL,
-  `LendDate` date NOT NULL DEFAULT current_timestamp(),
+  `LendDate` date NOT NULL DEFAULT (CURRENT_DATE),
   `ReturnDate` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -197,7 +197,7 @@ CREATE TABLE `PreReturn` (
 
 CREATE TABLE `QRCode` (
   `QRCodeNo` int(11) NOT NULL,
-  `CreateDate` date NOT NULL DEFAULT current_timestamp(),
+  `CreateDate` date NOT NULL DEFAULT (CURRENT_DATE),
   `Info` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
