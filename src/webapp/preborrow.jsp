@@ -11,8 +11,7 @@ if (session.getAttribute("userData") != null ){
 <!DOCTYPE html>
 <html>
 <head>
-    <title>智能AIoT物流倉儲管理系統</title>
-    
+    <title>具AIoT智能化管理與虛實整合優化路徑規劃之倉儲系統</title>
     <link rel="stylesheet" href="assets/css/main.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
@@ -184,12 +183,24 @@ if (session.getAttribute("userData") != null ){
             });
         }
     </script>
+    <style>
+        body {
+            font-size: 22px;
+            margin: 0px;
+            padding: 0px;
+            font-family: Arial, sans-serif;
+        }
+        .custom-heading {
+            font-size: 24px;
+            font-weight: bold;
+        }
+    </style>
 
 </head>
 <body>
     <div id="header">
         <div id="top-left">
-            <a href="index.jsp">首頁</a>
+            <a href="index.jsp" class="custom-heading">具AIoT智能化管理與虛實整合優化路徑規劃之倉儲系統</a>
         </div>
         <div id="top-right">
             <% if (session.getAttribute("login") == null || 
@@ -205,8 +216,6 @@ if (session.getAttribute("userData") != null ){
         </div>
     </div>
     <div id="content">
-        <h1>智能AIoT物流倉儲管理系統</h1>
-        
         <% if (session.getAttribute("login") != null && 
         (boolean) session.getAttribute("login") ) { %>
             <div class="cart-container" id="cart-container">

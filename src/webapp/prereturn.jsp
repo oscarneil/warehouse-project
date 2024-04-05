@@ -11,10 +11,14 @@ if (session.getAttribute("userData") != null ){
 <!DOCTYPE html>
 <html>
 <head>
-    <title>智能AIoT物流倉儲管理系統</title>
+    <title>具AIoT智能化管理與虛實整合優化路徑規劃之倉儲系統</title>
     <style>
         /* Header styles */
         /* Header styles */
+        .custom-heading {
+            font-size: 24px;
+            font-weight: bold;
+        }
         #header {
             background-color: #333;
             color: #fff;
@@ -73,8 +77,6 @@ if (session.getAttribute("userData") != null ){
         </div>
     </div>
     <div id="content">
-        <h1>智能AIoT物流倉儲管理系統</h1>
-        
         <% if (session.getAttribute("login") != null && 
         (boolean) session.getAttribute("login") ) { %>
             

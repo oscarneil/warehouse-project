@@ -11,7 +11,7 @@ if (session.getAttribute("userData") != null ){
 <!DOCTYPE html>
 <html>
 <head>
-    <title>智能AIoT物流倉儲管理系統</title>
+    <title>具AIoT智能化管理與虛實整合優化路徑規劃之倉儲系統</title>
     <style>
         /* 基本樣式 */
         body {
@@ -115,7 +115,10 @@ if (session.getAttribute("userData") != null ){
             background-color: #f0f0f0;
             border-radius: 5px;
         }
-
+        .custom-heading {
+        	font-size: 24px;
+        	font-weight: bold;
+        }
         /* Header styles */
         /* Header styles */
         #header {
@@ -154,7 +157,7 @@ if (session.getAttribute("userData") != null ){
 <body>
     <div id="header" class="banner">
         <div id="top-left">
-            <a href="index.jsp">首頁</a>
+            <a href="index.jsp" class="custom-heading">具AIoT智能化管理與虛實整合優化路徑規劃之倉儲系統</a>
         </div>
         <div id="top-right">
             <% if (session.getAttribute("login") == null || 
@@ -189,7 +192,6 @@ if (session.getAttribute("userData") != null ){
 
         <div class="middle-section">
                 <!-- 中間區塊 -->
-            <h1>智能AIoT物流倉儲管理系統</h1>
             <br>
             <div class="lend-component">
                 <% if (session.getAttribute("login") != null &&
