@@ -58,7 +58,7 @@ if (session.getAttribute("userData") != null ){
 
         .profile-picture img {
             width: 100%; /* 確保圖像填滿整個父元素（即方框） */
-            height: 100%; /* 確保圖像填滿整個父元素（即方框） */
+            height: 120%; /* 確保圖像填滿整個父元素（即方框） */
             object-fit: cover; /* 使圖像等比例地填充整個容器，並裁剪超出的部分 */
         }
 
