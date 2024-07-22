@@ -354,7 +354,6 @@ public class SQLConnection {
                 newBorrow.setInt(3, RiNo);
                 newBorrow.setInt(4, cnt);
                 newBorrow.setInt(5, 0);
-
                 newBorrow.executeUpdate();
                 newBorrow.close();
 
