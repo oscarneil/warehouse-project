@@ -5,6 +5,7 @@ import java.util.List;
 
 import gjt.usblab.Socket.baseSocket;
 import gjt.usblab.utils.logger;
+import gjt.usblab.SQLConnection.SQLConnection;
 public class nodeCluster {
     public static nodeCluster instance = null;
     public HashMap<Integer,node> nodes = new HashMap<>();

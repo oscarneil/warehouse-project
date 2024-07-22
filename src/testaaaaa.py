@@ -12,6 +12,29 @@ def door(QRCODE):
     client_socket.send(b"TYPE:03-ID:0001-")
     client_socket.send(("qrcode:{0}-".format(QRCODE)).encode('utf-8'))
     client_socket.close()
+    
+def Test():
+    server_ip = 'localhost' # Change this to the IP address of your server
+    server_port = 8764  # Change this to the port your server is listening on
+
+    # Create a socket object
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    # Connect to the server
+    client_socket.connect((server_ip, server_port))
+    client_socket.send(b"02C11001-")
+    client_socket.close()
+
+def Test01():
+    server_ip="localhost"
+    server_port=8764
+    # Create a socket object
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # Connect to the server
+    client_socket.connect((server_ip, server_port))
+    client_socket.send("03Barecode001-")
+    client_socket.close()
+
 def shelf(CODE):
     # Define the server's IP address and port number
     server_ip = 'localhost' # Change this to the IP address of your server

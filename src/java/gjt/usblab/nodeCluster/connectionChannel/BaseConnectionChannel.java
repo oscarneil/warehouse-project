@@ -11,11 +11,13 @@ import gjt.usblab.Socket.Packet.formatted.GreetPacket;
 import gjt.usblab.bridge.QRCodeBridge;
 import gjt.usblab.bridge.lendItemBridge;
 import gjt.usblab.nodeCluster.node;
+import gjt.usblab.nodeCluster.nodeCluster;
 import gjt.usblab.nodeCluster.nodeType;
 import gjt.usblab.SQLConnection.SQLConnection;
 import gjt.usblab.utils.logger;
 
 public abstract class BaseConnectionChannel {
+    private String lastEquipmentCode;
 
     protected node instance;
     protected RecvThread recvThread;
@@ -49,31 +51,44 @@ public abstract class BaseConnectionChannel {
 
     public void Recv(String s){
         if (s.contains(":")){
+            // 交易封包接收區域
+            String RFIDString = "";
             String[] splits = s.split(":");
             String c = splits[0];
             String result = splits[1];
-
-            if(c.contains("shelfE")){
-                System.out.println("Send Socket Message from BaseConnectionChannel.java : shelfE");
-                this.instance.dataChannel.ProcessSend("NAME:Knives-AMOUNT:5-");
+            if(splits.length>2){
+                RFIDString = splits[2];
             }
+            if(c.substring(0,2).equals("03")){
+                String typeCode = s.substring(2,3);
+                switch(typeCode){
+                    case "A" :
+                        // 門禁交易封包
+                        System.out.println("收到交易封包(Access)，設備類型:"+typeCode+"，封包內容:"+result);
+                        if (!result.isBlank()){
+                            System.out.println(this.instance + " enable QR CODE: " + result);
+                            ArrayList<HashMap<String,Object>> ret = Server.getInstance().sqlConnection.cmdFetchData(
+                                    "SELECT * from QRCode WHERE Info = '"+result+"' ",
+                                    "QRCodeNo");
+                            if (ret.size() == 0){
+                                System.out.println("code not found!");
+                                return;
+                            }
+                            int QRCodeNo = (int)ret.get(0).get("QRCodeNo");
+                            QRCodeBridge.codeEnable(QRCodeNo);
+                        }
+                        break;
 
-            if(c.contains("shelfC")){
-                System.out.println("Send Socket Message from BaseConnectionChannel.java : shelfC");
-                this.instance.dataChannel.ProcessSend("NAME:Consumables-AMOUNT:1-");
-            }
+                    case "C":
+                        System.out.println("收到交易封包(Consumable)，設備類型:"+typeCode+"，封包內容:"+result+"RFID:"+RFIDString);
+                        break;
 
-            if(c.contains("led")){
-                System.out.println("Send Socket Message from BaseConnectionChannel.java : led");
-                this.instance.dataChannel.ProcessSend("REDON-");
-                try{
-                    System.out.println("Thread sleep start 10sec");
-                    Thread.sleep(10*1000);
-                    System.out.println("Thread wakeup");
-                }catch(InterruptedException e){
-                    System.out.println("Exception while Thread sleep:"+e.toString());
+                    case "E":
+                        System.out.println("收到交易封包(Expensive)，設備類型:"+typeCode+"，封包內容:"+result+"RFID:"+RFIDString);
+
+                        break;
+
                 }
-                this.instance.dataChannel.ProcessSend("REDOFF-");
             }
 
             if (c.equalsIgnoreCase("rfid")){
@@ -161,6 +176,50 @@ public abstract class BaseConnectionChannel {
             }
 
 
+
+
+        }else{
+            try{
+                // 開始封包接收區域
+                SQLConnection sqlConnection = new SQLConnection();
+                if(s.substring(0,2).equals("02")){
+                    String typeCode = s.substring(2,3);
+                    int deviceID = Integer.parseInt(s.substring(3), 2);
+                    switch(typeCode){
+                        case "A" :
+                            lastEquipmentCode = s;
+                            System.out.println("收到開始封包，設備編號:"+lastEquipmentCode+"，nodeID:"+nodeCluster.instance.lastNodeID);
+                            sqlConnection.addNodeDevice(deviceID,typeCode,nodeCluster.instance.lastNodeID);
+                            break;
+
+                        case "L":
+                            lastEquipmentCode = s;
+                            System.out.println("收到開始封包，設備編號:"+lastEquipmentCode+"，nodeID:"+nodeCluster.instance.lastNodeID);
+                            sqlConnection.addNodeDevice(deviceID,typeCode,nodeCluster.instance.lastNodeID);
+                            nodeCluster.getInstance().getNode(nodeCluster.instance.lastNodeID).dataChannel.ProcessSend("01L$REDON-");
+                            break;
+
+                        case "C":
+                            System.out.println("收到開始封包，設備編號:"+lastEquipmentCode+"，nodeID:"+nodeCluster.instance.lastNodeID);
+                            sqlConnection.addNodeDevice(deviceID,typeCode,nodeCluster.instance.lastNodeID);
+//                            nodeCluster.getInstance().getNode(nodeCluster.instance.lastNodeID).dataChannel.ProcessSend(" 01C$name:consumables$amount:5-");
+                            break;
+
+                        case "E":
+                            System.out.println("收到開始封包，設備編號:"+lastEquipmentCode+"，nodeID:"+nodeCluster.instance.lastNodeID);
+                            sqlConnection.addNodeDevice(deviceID,typeCode,nodeCluster.instance.lastNodeID);
+                              nodeCluster.getInstance().getNode(nodeCluster.instance.lastNodeID).dataChannel.ProcessSend("01E$name:knife$amount:5-");
+                              nodeCluster.getInstance().getNode(nodeCluster.instance.lastNodeID).dataChannel.ProcessSend("01C$name:consumables$amount:10-");
+//                            nodeCluster.getInstance().getNode(nodeCluster.instance.lastNodeID).dataChannel.ProcessSend("01E$LEDON-");
+//                            Thread.sleep(5000);
+//                            nodeCluster.getInstance().getNode(nodeCluster.instance.lastNodeID).dataChannel.ProcessSend(" 01E$name:knife$amount:5-");
+                            break;
+                    }
+                }
+
+            }catch(Exception e){
+                System.out.println("Exception while Thread sleep:"+e.toString());
+            }
 
 
         }

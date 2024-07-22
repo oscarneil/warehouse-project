@@ -330,7 +330,6 @@ CREATE TABLE `RGBLed` (
 --
 -- 傾印資料表的資料 `RGBLed`
 --
-
 INSERT INTO `RGBLed` (`ledNo`, `ledID`) VALUES
 (1, '0001');
 
@@ -444,7 +443,17 @@ INSERT INTO `Taken` (`TNo`, `count`, `CNo`, `eNo`) VALUES
 --
 -- 已傾印資料表的索引
 --
+----------------------------------------------------------------
+-- 資料表結構 'node device'
 
+CREATE TABLE nodedevice(
+deviceID int NOT NULL,
+deviceType varchar(1) NOT NULL,
+nodeID int NOT NULL,
+distance int
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+----------------------------------------------------------------
 --
 -- 資料表索引 `Admin`
 --

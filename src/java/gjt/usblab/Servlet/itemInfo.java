@@ -59,7 +59,7 @@ public class itemInfo extends HttpServlet {
         }else{
 
             ArrayList<HashMap<String,Object>> ret = Server.getInstance().sqlConnection.cmdFetchData(
-                "SELECT RegisterItem.RiNo,RegisterItem.Name,RegisterItem.filename,count from RegisterItem INNER JOIN Consumables on RegisterItem.RiNo = Consumables.RiNo WHERE RegisterItem.RiNo="+id+" GROUP BY RegisterItem.RiNo",
+                "SELECT RegisterItem.RiNo,RegisterItem.Name,RegisterItem.filename,Consumables.count from RegisterItem INNER JOIN Consumables on RegisterItem.RiNo = Consumables.RiNo WHERE RegisterItem.RiNo="+id+" GROUP BY RegisterItem.RiNo, Consumables.count",
                 "RiNo",
                 "Name",
                 "filename",

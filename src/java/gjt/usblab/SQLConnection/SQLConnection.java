@@ -390,5 +390,20 @@ public class SQLConnection {
         }
     }
 
+    public void addNodeDevice(int deviceID ,String deviceType,int nodeID ){
+        try{
+            Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement insertSQL = connection.prepareStatement("INSERT INTO nodedevice (deviceID,deviceType,nodeID) VALUES (?,?,?)");
+            insertSQL.setInt(1,deviceID);
+            insertSQL.setString(2,deviceType);
+            insertSQL.setInt(3,nodeID);
+            insertSQL.executeUpdate();
+            insertSQL.close();
+            System.out.println("insert 1 data to nodedevice, deviceID:"+deviceID);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
 
 }

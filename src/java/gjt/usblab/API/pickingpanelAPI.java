@@ -152,7 +152,8 @@ public class pickingpanelAPI  extends HttpServlet {
 
                 if(lastQRCodeNo==null || !lastQRCodeNo.equals(Integer.valueOf(QRCodeNo))){
                     System.out.println("Send Socket Message from pickingpanelAPI.java : led on");
-                    nodeCluster.getInstance().getNode(nodeCluster.instance.lastNodeID).dataChannel.ProcessSend("REDON-");
+                    nodeCluster.getInstance().getNode(nodeCluster.instance.lastNodeID).dataChannel.ProcessSend(result.LEDcolor.toUpperCase()+"-");
+
                     lastQRCodeNo = Integer.valueOf(QRCodeNo);
                 }
 

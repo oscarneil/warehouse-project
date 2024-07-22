@@ -70,8 +70,12 @@ if (session.getAttribute("userData") != null ){
                 },
                 success: function(data) {
                     tt = data;
-                    var color = "#66B3FF";
-                    // var color = data.LEDcolor;
+
+                    // 0301 比賽開啟
+                    // var color = "#66B3FF";
+                     var color = data.LEDcolor;
+                    // 0301 比賽完開啟
+
                     // update form
                     // 1. map info
                     // 2. led color
