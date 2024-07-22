@@ -339,6 +339,7 @@ public class SQLConnection {
                 state.executeUpdate(query);
                 state.close();
                 connection.close();
+
             }catch(Exception e){
                 e.printStackTrace();
             }
