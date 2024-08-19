@@ -14,7 +14,7 @@ public enum cmd {
     LED_OFF("LED-OFF");
 
 
-    public String c;
+    private String c;
     private cmd(String command){
         this.c = command;
     }

@@ -1,6 +1,7 @@
 package gjt.usblab.Server;
 
 import java.net.ServerSocket;
+import java.util.concurrent.CountDownLatch;
 
 import gjt.usblab.SQLConnection.SQLConnection;
 import gjt.usblab.Socket.baseSocket;
@@ -17,57 +18,73 @@ public class Server {
     public boolean listen_success = false;
     private nodeCluster cluster;
     public SQLConnection sqlConnection;
-    private Server(){
+
+    private Server() {
         cluster = nodeCluster.getInstance();
         this.sqlConnection = new SQLConnection();
     }
-    public static Server getInstance(){
+
+    public static Server getInstance() {
         if (instance == null) instance = new Server();
         return instance;
     }
 
-    public void setup(){
-        try{
+    public void setup() {
+        try {
             server = new ServerSocket(port);
             listen_success = true;
             serverSocket = new serverSocket(server);
             logger.getInstance().log("port bind successful");
-        }catch(Exception e){
-            logger.getInstance().log("port bind failed : " + e.getMessage(),LogLevel.ERROR);
+        } catch (Exception e) {
+            logger.getInstance().log("port bind failed : " + e.getMessage(), LogLevel.ERROR);
         }
-        
+
     }
 
-    public void shutdown(){
-        try{
+    public void shutdown() {
+        try {
             this.server.close();
-        }catch(Exception e){
-            
+        } catch (Exception e) {
+
         }
     }
 
 
-    public void running(){
+    public void running() {
         System.out.println("start running");
-        while (true){
+        while (true) {
             baseSocket conn;
-            synchronized (serverSocket){
-                logger.getInstance().log("waiting for connection");
-                conn = serverSocket.getConnection();
-                if (conn != null){
-                    node node = new node(conn.getIP(),conn.getSocketID(),conn); // create a connection object
-                    System.out.println(node + " connected");
-                    cluster.addNode(node);
-                    logger.getInstance().log(conn.toString());
-                    logger.getInstance().log(node.toString());
-                    // last = connection.getId();
-                    logger.getInstance().log("machine "+node.getIP()+" connected!");
+            synchronized (serverSocket) {
+                try {
+                    logger.getInstance().log("waiting for connection");
+                    conn = serverSocket.getConnection();
+                    if (conn != null) {
+                        CountDownLatch latch = new CountDownLatch(1);
+                        node node = new node(conn.getIP(), conn.getSocketID(), conn, latch); // create a connection object
+                        System.out.println(node + " connected");
+                        cluster.addNode(node);
+//                    Server.getInstance().sqlConnection.addNodeDevice(deviceID, packetValueInstance.getPacketType(), nodeCluster.instance.lastNodeID);
+                        logger.getInstance().log(conn.toString());
+                        logger.getInstance().log(node.toString());
+                        // last = connection.getId();
+                        logger.getInstance().log("machine " + node.getIP() + " connected!");
+                        latch.await();
+
+                        System.out.println("recv && send Thread finished,nodeID:" + node.getID());
+                        System.out.println("----------------------------------------");
+                    }
+                } catch (InterruptedException e) {
+                    // Handle the InterruptedException
+                    System.out.println("InterruptedException occurred: " + e.getMessage());
+                    e.printStackTrace();
+                    // Optionally, restore the interrupted status
+                    Thread.currentThread().interrupt();
+                } catch (Exception e) {
+                    // Handle other exceptions
+                    System.out.println("Exception occurred: " + e.getMessage());
+                    e.printStackTrace();
                 }
-
             }
-
         }
-
     }
-
 }

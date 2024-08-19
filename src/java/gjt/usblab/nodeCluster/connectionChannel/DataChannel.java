@@ -4,54 +4,53 @@ import gjt.usblab.Socket.baseSocket;
 import gjt.usblab.Socket.Packet.BasePacket;
 import gjt.usblab.nodeCluster.node;
 
-public class DataChannel extends BaseConnectionChannel{
+import java.util.concurrent.CountDownLatch;
+
+public class DataChannel extends BaseConnectionChannel {
     private boolean channelStop = false;
-    public DataChannel(baseSocket cSocket,node instance) {
-        super(cSocket, instance);
-        
+
+    public DataChannel(baseSocket cSocket, node instance, CountDownLatch latch) {
+        super(cSocket, instance, latch);
+
     }
 
-    public void closeChannel(){
+    public void closeChannel() {
         channelStop = true;
     }
 
-    public void waitUntiChannelStopped(){
-        while(true){
-            if(channelStopped()) break;
-            try{
+    public void waitUntiChannelStopped() {
+        while (true) {
+            if (channelStopped()) break;
+            try {
 
                 Thread.sleep(100);
-            }catch(Exception e){
+            } catch (Exception e) {
 
             }
         }
     }
 
-    public boolean channelStopped(){
+    public boolean channelStopped() {
         return channelStop;
     }
 
 
-    
-
-    
     public void ProcessRecv(BasePacket p) {
         // System.out.println("?");
         // System.out.println(this);
-        
+
     }
 
 
-    
-    public void disconnect(){
-        synchronized(this){
-            if (!terminated){
+    public void disconnect() {
+        synchronized (this) {
+            if (!terminated) {
                 terminated = true;
                 recvThread.terminate();
                 sendThread.terminate();
                 connectionSocket.terminate();
             }
-            
+
         }
     }
 }

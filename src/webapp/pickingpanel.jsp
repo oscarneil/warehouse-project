@@ -58,6 +58,22 @@ if (session.getAttribute("userData") != null ){
                 xhr.send();
             }
 
+        function loadSwitchState() {
+            $.ajax({
+                type: "GET",
+                url: "/main/api/loadSwitchState",
+                dataType: 'json',
+                success: function(data) {
+                    const switchButton = document.getElementById('flexSwitchCheckDefault');
+                    switchButton.checked = !data;
+                    console.log("Data of returnable:",data);
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX 错误:", status, error);
+                }
+            });
+        }
+
         function loadInfo() {
             
             $.ajax({
@@ -240,6 +256,56 @@ if (session.getAttribute("userData") != null ){
             font-size: 24px;
             font-weight: bold;
         }
+        .form-check {
+            display: flex;
+            align-items: center;
+        }
+        .form-check-input {
+            width: 50px;
+            height: 25px;
+            -webkit-appearance: none;
+            appearance: none;
+            background-color: #c6c6c6;
+            border-radius: 25px;
+            position: relative;
+            outline: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .form-check-input:checked {
+            background-color: #f44336;
+        }
+
+        .form-check-input::before {
+            content: '';
+            position: absolute;
+            width: 23px;
+            height: 23px;
+            border-radius: 50%;
+            background-color: #fff;
+            top: 1px;
+            left: 1px;
+            transition: transform 0.2s;
+        }
+
+        .form-check-input:checked::before {
+            transform: translateX(25px);
+        }
+
+        .form-check-label {
+            font-size: 23px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .form-check-container {
+            margin-right: 170px;
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -254,7 +320,7 @@ if (session.getAttribute("userData") != null ){
             <% } else {%>
                 <a href="listelement.jsp">物品列表</a>
                 <a href="preborrow.jsp">選取表</a>
-                <a href="prereturn.jsp"></a>
+                <a href="returnExpensive.jsp">歸還列表</a>
                 <a href="history.jsp">紀錄</a>
                 <a href="logout">登出</a>
             <% } %>
@@ -285,11 +351,22 @@ if (session.getAttribute("userData") != null ){
                     </div>
                     <div class="column3">
                         <!-- Right column: Item information -->
-                        <div class="item-info">
-                            <p id="iteminfoCNT1">已拿取：</p>
-                            <p id="iteminfoCNT2">需拿取：</p>
-                        </div>
-                        <button id="nextbtn" class="workorderbtn">下一樣物品</button>
+
+                         <div class="form-check-container">
+                             <div class="form-check form-switch">
+                                 <label class="form-check-label" for="flexSwitchCheckDefault">刀具借用狀態</label>
+                                 <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                             </div>
+                         </div>
+
+                         <div class="item-info">
+                             <p id="iteminfoCNT1">已拿取：</p>
+                             <p id="iteminfoCNT2">需拿取：</p>
+                         </div>
+
+                         <button id="nextbtn" class="workorderbtn">下一樣物品</button>
+                          <!-- 0824 展覽後打開 -->
+
                     </div>
                 </div>
                 <div class="row row3" >
@@ -317,25 +394,46 @@ if (session.getAttribute("userData") != null ){
                 
             </div>
             <script>
-                setInterval(loadInfo, 1000);
+                setInterval(loadInfo,1000);
+
+                $(document).ready(function() {
+                    loadSwitchState();
+                       setInterval(function() {
+                            loadSwitchState();
+                        }, 1000);
+                });
+
+                document.addEventListener('DOMContentLoaded', function() {
+                    const switchButton = document.getElementById('flexSwitchCheckDefault');
+
+                    switchButton.addEventListener('change', function() {
+                        const isChecked = !this.checked;
+                        $.ajax({
+                            type: "GET",
+                            url: "/main/api/updateReturnableStatus",
+                            data: { status: isChecked },
+                            success: function(response) {
+                                console.log('狀態更新成功:', response);
+                            },
+                            error: function(xhr, status, error) {
+                                console.error("AJAX 错误:", status, error);
+                            }
+                        });
+                    });
+                });
+
                 const nextButton = document.getElementById('nextbtn');
                 const closeButton = document.getElementById('closebtn');
 
                 nextButton.addEventListener('click', () => {
                     next = true;
                     loadInfo();
-                    //  0315 比賽
-                    additem();
-                    //  0315 比賽
                 });
 
                 closeButton.addEventListener('click', () => {
                     end = true;
                     loadInfo();
-
-                    //  0315 比賽
-                    turnOffLED();
-                    //  0315 比賽
+                    turnOffLED()
                 });
             </script>
 

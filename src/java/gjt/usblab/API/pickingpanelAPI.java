@@ -22,9 +22,10 @@ import javax.servlet.*;             // Tomcat 9
 import javax.servlet.http.*;        // Tomcat 9
 
 
-public class pickingpanelAPI  extends HttpServlet {
+public class pickingpanelAPI extends HttpServlet {
     public Integer lastQRCodeNo;
-    public class retVal{
+
+    public class retVal {
         public ArrayList<itemData> datas = new ArrayList<>();
         public itemData mainData;
         public String QRCodeURL;
@@ -38,32 +39,40 @@ public class pickingpanelAPI  extends HttpServlet {
         public itemData popData;
 
         public List<Integer> paths = new ArrayList<>();
-        public retVal(){
+
+        public retVal() {
             finish = false;
             wait = false;
             end = false;
             pop = false;
             LEDcolor = "black";
         }
-        public void setPaths(List<Integer> pat){
+
+        public void setPaths(List<Integer> pat) {
             this.paths = pat;
         }
-        public void setDatas( ArrayList<itemData> data){
+
+        public void setDatas(ArrayList<itemData> data) {
             this.datas = data;
         }
-        public void setMainData(itemData mData){
-            this.mainData=mData;
+
+        public void setMainData(itemData mData) {
+            this.mainData = mData;
         }
-        public void setQRCodeURL(String url){
+
+        public void setQRCodeURL(String url) {
             this.QRCodeURL = url;
         }
-        public void setM(long minutes){
+
+        public void setM(long minutes) {
             this.minutes = minutes;
         }
-        public void setS(long seconds){
+
+        public void setS(long seconds) {
             this.seconds = seconds;
         }
     }
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         // every 1 sec may refresh
@@ -75,7 +84,7 @@ public class pickingpanelAPI  extends HttpServlet {
         String end = request.getParameter("end");
         retVal result = new retVal();
         HttpSession s = request.getSession();
-        if (s.getAttribute("userData") != null && ((userData) s.getAttribute("userData")).inPreBorrow ){
+        if (s.getAttribute("userData") != null && ((userData) s.getAttribute("userData")).inPreBorrow) {
             userData uData = (userData) s.getAttribute("userData");
             result.setQRCodeURL(uData.PreBorrowQRCodeURL);
 
@@ -88,32 +97,32 @@ public class pickingpanelAPI  extends HttpServlet {
             // wait from 門禁 to check (available)
             boolean stop = false;
 
-            if (QRCodeBridge.codeAvailable(QRCodeNo)){
-                lendItemBridge.setCode(eNo,QRCodeNo);
+            if (QRCodeBridge.codeAvailable(QRCodeNo)) {
+                lendItemBridge.setCode(eNo, QRCodeNo);
                 // get elements from eNo and QRCodeNo
                 ArrayList<Long> tret = QRCodeBridge.getDistance(QRCodeNo);
                 long minutes = tret.get(0);
                 long seconds = tret.get(1);
                 result.setM(minutes);
                 result.setS(seconds);
-                ArrayList<HashMap<String,Object>> ret = Server.getInstance().sqlConnection.cmdFetchData(
-                    "SELECT * from PreBorrow INNER JOIN RegisterItem on PreBorrow.RiNo = RegisterItem.RiNo WHERE eNo = '"+eNo+"' AND QRCodeNo = '"+QRCodeNo+"' ",
-                    "RiNo",
-                    "PbCount",
-                    "filename",
-                    "HoldCount",
-                    "Name");
+                ArrayList<HashMap<String, Object>> ret = Server.getInstance().sqlConnection.cmdFetchData(
+                        "SELECT * from PreBorrow INNER JOIN RegisterItem on PreBorrow.RiNo = RegisterItem.RiNo WHERE eNo = '" + eNo + "' AND QRCodeNo = '" + QRCodeNo + "' ",
+                        "RiNo",
+                        "PbCount",
+                        "filename",
+                        "HoldCount",
+                        "Name");
 
                 // if next
 
                 result.LEDcolor = solver.getColor(QRCodeNo);
-                if (next.equalsIgnoreCase("true")){
+                if (next.equalsIgnoreCase("true")) {
                     solver.nextResult(QRCodeNo);
                 }
-                if (end.equalsIgnoreCase("true")){
+                if (end.equalsIgnoreCase("true")) {
                     stop = true;
                 }
-                if (lendItemBridge.check(QRCodeNo)){
+                if (lendItemBridge.check(QRCodeNo)) {
                     itemData popItem = lendItemBridge.get(QRCodeNo);
                     result.pop = true;
                     result.popData = popItem;
@@ -121,10 +130,10 @@ public class pickingpanelAPI  extends HttpServlet {
 
                 //
 
-                HashMap<Integer,itemData> datas = new HashMap<>();
+                HashMap<Integer, itemData> datas = new HashMap<>();
                 ArrayList<itemData> ls = new ArrayList<>();
-                for (HashMap<String,Object> obj : ret){
-                    int RiNo = (int)obj.get("RiNo");
+                for (HashMap<String, Object> obj : ret) {
+                    int RiNo = (int) obj.get("RiNo");
                     int PbCount = (int) obj.get("PbCount");
                     int holdCount = (int) obj.get("HoldCount");
                     String filename = (String) obj.get("filename");
@@ -136,12 +145,12 @@ public class pickingpanelAPI  extends HttpServlet {
                     ls.add(iData);
                 }
                 result.setDatas(ls);
-                if (solver.test(QRCodeNo)){
+                if (solver.test(QRCodeNo)) {
                     ItemPath path = solver.getCurrent(QRCodeNo);
                     int Main_RiNo = path.RiNo;
                     result.setPaths(path.paths);
                     result.setMainData(datas.get(Main_RiNo));
-                }else{
+                } else {
                     // end
                     stop = true;
                 }
@@ -150,16 +159,14 @@ public class pickingpanelAPI  extends HttpServlet {
                     result.finish = true;
                 }
 
-                if(lastQRCodeNo==null || !lastQRCodeNo.equals(Integer.valueOf(QRCodeNo))){
-                    System.out.println("Send Socket Message from pickingpanelAPI.java : led on");
-                    nodeCluster.getInstance().getNode(nodeCluster.instance.lastNodeID).dataChannel.ProcessSend(result.LEDcolor.toUpperCase()+"-");
-
+                if (lastQRCodeNo == null || !lastQRCodeNo.equals(Integer.valueOf(QRCodeNo))) {
+//                    nodeCluster.getInstance().getNode(nodeCluster.instance.lastNodeID).dataChannel.ProcessSend(result.LEDcolor.toUpperCase() + "-");
                     lastQRCodeNo = Integer.valueOf(QRCodeNo);
                 }
 
-            }else{  
+            } else {
                 // disable 
-                
+
 
                 result.wait = true; // wait for qrcode
                 // debug
@@ -167,7 +174,7 @@ public class pickingpanelAPI  extends HttpServlet {
             }
 
 
-           result.end = stop;
+            result.end = stop;
         }
         // have to check  
         // 
@@ -190,6 +197,7 @@ public class pickingpanelAPI  extends HttpServlet {
         String jsonData = new Gson().toJson(result);
         response.getWriter().write(jsonData);
     }
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         doGet(request, response);

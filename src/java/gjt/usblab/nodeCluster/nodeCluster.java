@@ -1,49 +1,53 @@
 package gjt.usblab.nodeCluster;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import gjt.usblab.Socket.baseSocket;
 import gjt.usblab.utils.logger;
 import gjt.usblab.SQLConnection.SQLConnection;
+
 public class nodeCluster {
     public static nodeCluster instance = null;
-    public HashMap<Integer,node> nodes = new HashMap<>();
+    public HashMap<Integer, node> nodes = new HashMap<>();
     public int door_node;
 
     public int lastNodeID;
-    
-    
-    public node getDoorNode(){
+
+
+    public node getDoorNode() {
         return nodes.get(door_node);
     }
 
 
-    public static nodeCluster getInstance(){
+    public static nodeCluster getInstance() {
         if (instance == null) instance = new nodeCluster();
         return instance;
 
     }
-    private nodeCluster(){
-    }  
-    public void addNode(node node){
-        logger.getInstance().log(node.toString());
-        
-        if (nodes.containsKey(node.getID())){
-            System.out.println("collision!");
-        }
 
-        System.out.println("目前 nodeID :"+node.getID());
-        lastNodeID = node.getID();
-        nodes.put(node.getID(),node);
-        
+    private nodeCluster() {
     }
 
-    public void removeNode(int id){
+    public void addNode(node node) {
+        logger.getInstance().log(node.toString());
+
+        if (nodes.containsKey(node.getID())) {
+            System.out.println("collision!");
+        }
+        System.out.println("-------------------------------------");
+        System.out.println("目前 nodeID :" + node.getID());
+        lastNodeID = node.getID();
+        nodes.put(node.getID(), node);
+    }
+
+    public void removeNode(int id) {
         this.nodes.remove(id);
     }
 
-    public node getNode(int id){
+    public node getNode(int id) {
         return nodes.get(id);
     }
 }

@@ -69,7 +69,7 @@ if (session.getAttribute("userData") != null ){
                 <div class="modal-content">
                     <span class="close" id="closeModal">&times;</span>
                     <h2>管理物品</h2>
-                    <p>選擇要補充的數量:</p>
+                    <p>選擇要借用的數量:</p>
                     <div class="number-input">
                         <button id="decrement">-</button>
                         <input type="number" id="lendQuantity" min="1" value="1">

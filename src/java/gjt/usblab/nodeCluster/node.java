@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 
 import gjt.usblab.Socket.baseSocket;
 import gjt.usblab.Socket.Packet.formatted.GreetPacket;
@@ -22,63 +23,62 @@ public class node {
     public String RFID;
     public nodeType type = nodeType.none;
     public int device_id = -1;
-    
-    
-    public node(String ip,int id,baseSocket cSocket){
+    private CountDownLatch latch;
+
+    public node(String ip, int id, baseSocket cSocket, CountDownLatch latch) {
         this.IP = ip;
         this.id = id;
         this.csocket = cSocket;
         // after connection the server will give a socket (cSocket) that can be used as DataChannel
-        this.dataChannel = new DataChannel(this.csocket,this); // this will create a conneciton that handle
+        this.latch = latch;
+        this.dataChannel = new DataChannel(this.csocket, this, latch); // this will create a conneciton that handle
         // 傳送 socket value值
         // dataChannel.ProcessSend("abc");
     }
 
-    public void setType(nodeType type){
+    public void setType(nodeType type) {
         this.type = type;
     }
-    public void setDeviceID(int d){
+
+    public void setDeviceID(int d) {
         this.device_id = d;
 
     }
 
-    public void setLastRFID(String RFID){
+    public void setLastRFID(String RFID) {
         this.RFID = RFID;
     }
-    
-    
 
-    
 
-    public String getIP(){
+    public String getIP() {
         return IP;
     }
-    public int getID(){
+
+    public int getID() {
         return id;
     }
 
 
-    
-
     /**
      * if control channel is dead, it means the connection is closed \so call this absorb function to return the data port to the port pool
      */
-    public void absorb(){
-        
-        synchronized(this){
-            if (!absorb){
+    public void absorb() {
+
+        synchronized (this) {
+            if (!absorb) {
                 absorb = true;
                 if (dataChannel != null) dataChannel.disconnect();
                 nodeCluster.getInstance().removeNode(id);
                 // if disconnect data restore 
             }
-            
+
         }
-        
+
     }
+
     @Override
-    public String toString(){
-        return "("+this.type.s+") ID: "+device_id+" >";
-        
+    public String toString() {
+        return "(" + this.type.s + ") ID: " + device_id + " >";
+
     }
 }

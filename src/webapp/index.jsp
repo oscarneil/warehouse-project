@@ -152,6 +152,33 @@ if (session.getAttribute("userData") != null ){
             text-align: left; /* Reset the text alignment for form elements */
         }
     </style>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function inventoryData() {
+            $.ajax({
+                url: '/main/api/getInventoryData',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    // 更新頁面上的數據
+                    $('#toolCount').text(data.knifeCount);
+                    $('#consumableCount').text(data.screwsCount);
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error: ' + status + error);
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            inventoryData();
+               setInterval(function() {
+                    inventoryData();
+                }, 1000);
+        });
+    </script>
+
 <!--  <link rel="stylesheet" href="assets/css/main.css" /> -->
 </head>
 <body>
@@ -167,7 +194,7 @@ if (session.getAttribute("userData") != null ){
                 <a href="http://140.130.4.49:748/">產品履歷</a>
                 <a href="listelement.jsp">物品列表</a>
                 <a href="preborrow.jsp">選取表</a>
-                <!-- <a href="prereturn.jsp">退還表</a> -->
+                <a href="returnExpensive.jsp">歸還列表</a>
                 <a href="history.jsp">紀錄</a>
                 <a href="logout">登出</a>
             <% } %>
@@ -196,13 +223,13 @@ if (session.getAttribute("userData") != null ){
             <div class="lend-component">
                 <% if (session.getAttribute("login") != null &&
                     (boolean) session.getAttribute("login") ) { %>
-                        <h2>借用刀具:</h2>
+                        <h2>刀具跟耗材庫存:</h2>
                         <div class="lend-item">
                             <div class="lend-picture">
                                 <img src="file/Drill01.jpg">
                             </div>
                             <div class="lend-itemContent">
-                                <h2>刀具 : 2</h2>
+                                <h2>knife : <span id="toolCount">0</span></h2>
                             </div>
                         </div>
                         <br>
@@ -212,7 +239,7 @@ if (session.getAttribute("userData") != null ){
                                 <img src="file/Consumable01.jpg">
                             </div>
                             <div class="lend-itemContent">
-                                <h2>耗材 : 3</h2>
+                                <h2>screws : <span id="consumableCount">0</span></h2>
                             </div>
                         </div>
                     <br>
