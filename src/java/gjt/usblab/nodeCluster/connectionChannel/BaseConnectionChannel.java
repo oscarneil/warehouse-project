@@ -86,15 +86,9 @@ public abstract class BaseConnectionChannel {
                         }
                         int QRCodeNo = (int) ret.get(0).get("QRCodeNo");
                         QRCodeBridge.codeEnable(QRCodeNo);
-//                        int nodeID = Server.getInstance().sqlConnection.selectNodeIDALimit1();
-//                        System.out.println("------------------nodeID:" + nodeID + "-------------");
-//                        nodeCluster.getInstance().getNode(nodeID).dataChannel.ProcessSend("01L$GRNON-");
-//                        try {
-//                            Thread.sleep(5000);
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
-//                        nodeCluster.getInstance().getNode(nodeID).dataChannel.ProcessSend("01L$GRNOF-");
+                        int nodeID = Server.getInstance().sqlConnection.selectNodeIDALimit1();
+                        System.out.println("------------------nodeID:" + nodeID + "-------------");
+                        nodeCluster.getInstance().getNode(nodeID).dataChannel.ProcessSend("01L$GRNON-");
                         System.out.println("------------------01L$GRNON-------------");
                     }
                     break;
@@ -156,7 +150,6 @@ public abstract class BaseConnectionChannel {
                     System.out.println("收到開始封包(LED)，設備類型:" + packetValueInstance.getPacketType() + "，設備ID:" + deviceID + "，nodeID:" + nodeCluster.instance.lastNodeID);
                     Server.getInstance().sqlConnection.addNodeDevice(deviceID, packetValueInstance.getPacketType(), nodeDeviceIndex.get());
                     nodeDeviceIndex.getAndAdd(1);
-//                    nodeCluster.getInstance().getNode(nodeCluster.instance.lastNodeID).dataChannel.ProcessSend("01L$REDON-");
                     break;
 
                 case "C":
@@ -171,7 +164,6 @@ public abstract class BaseConnectionChannel {
                     System.out.println("收到開始封包(Expensive)，設備類型:" + packetValueInstance.getPacketType() + "，設備ID:" + deviceID + "，nodeID:" + nodeCluster.instance.lastNodeID);
                     Server.getInstance().sqlConnection.addNodeDevice(deviceID, packetValueInstance.getPacketType(), nodeDeviceIndex.get());
                     nodeDeviceIndex.getAndAdd(1);
-//                  nodeCluster.getInstance().getNode(nodeCluster.instance.lastNodeID).dataChannel.ProcessSend("01C$name:consumables$amount:10-");
                     break;
             }
         }

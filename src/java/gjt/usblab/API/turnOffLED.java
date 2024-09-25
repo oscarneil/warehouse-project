@@ -27,10 +27,10 @@ public class turnOffLED extends HttpServlet {
         HttpSession session = request.getSession();
         response.setContentType("application/json");
 
-//        int nodeID = Server.getInstance().sqlConnection.selectNodeIDALimit1();
-//        System.out.println("------------------nodeID:" + nodeID + "-------------");
-//        nodeCluster.getInstance().getNode(nodeID).dataChannel.ProcessSend("01L$GRNOF-");
-//        System.out.println("------------------01L$GRNOF-------------");
+        int nodeID = Server.getInstance().sqlConnection.selectNodeIDALimit1();
+        System.out.println("------------------nodeID:" + nodeID + "-------------");
+        nodeCluster.getInstance().getNode(nodeID).dataChannel.ProcessSend("01L$GRNOF-");
+        System.out.println("------------------01L$GRNOF-------------");
 
         String jsonData = new Gson().toJson("success");
         response.getWriter().write(jsonData);

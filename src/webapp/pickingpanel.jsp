@@ -11,7 +11,7 @@ if (session.getAttribute("userData") != null ){
 <!DOCTYPE html>
 <html>
 <head>
-    <title>具AIoT智能化管理與虛實整合優化路徑規劃之倉儲系統</title>
+    <title>智能AIOT物流倉儲管理系統</title>
     <link rel="stylesheet" href="assets/css/main.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
@@ -259,6 +259,7 @@ if (session.getAttribute("userData") != null ){
         .form-check {
             display: flex;
             align-items: center;
+            flex-wrap: nowrap;
         }
         .form-check-input {
             width: 50px;
@@ -299,19 +300,32 @@ if (session.getAttribute("userData") != null ){
             cursor: pointer;
             font-weight: bold;
             margin-right: 10px;
+            white-space: nowrap;
         }
         .form-check-container {
             margin-right: 170px;
             display: flex;
             justify-content: flex-end;
             margin-bottom: 20px;
+            width: 100%;
         }
+
+        @media only screen
+          and (min-device-width: 768px)
+          and (max-device-width: 1024px)
+          and (orientation: landscape)
+          and (-webkit-min-device-pixel-ratio: 2) {
+            #showitem, #itemname {
+                margin-left: 70px;
+            }
+        }
+
     </style>
 </head>
 <body>
     <div id="header">
         <div id="top-left">
-            <a href="index.jsp" class="custom-heading">具AIoT智能化管理與虛實整合優化路徑規劃之倉儲系統</a>
+            <a href="index.jsp" class="custom-heading">智能AIOT物流倉儲管理系統</a>
         </div>
         <div id="top-right">
             <% if (session.getAttribute("login") == null || 

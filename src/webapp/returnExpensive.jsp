@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>具AIoT智能化管理與虛實整合優化路徑規劃之倉儲系統</title>
+    <title>智能AIOT物流倉儲管理系統</title>
     <style>
         body {
             font-size: 22px;
@@ -133,7 +133,15 @@
 
                         nameCell.textContent = tool.name;
                         quantityCell.textContent = tool.quantity;
+
                         returnStatusCell.textContent = tool.returnStatus;
+                        returnStatusCell.style.fontWeight = 'bold';
+                        if (tool.returnStatus === '未歸還') {
+                            returnStatusCell.style.color = 'red';
+                        } else if (tool.returnStatus === '已歸還') {
+                            returnStatusCell.style.color = 'green';
+                        }
+
                         returnDateCell.textContent = tool.returnDate;
                         lendDateCell.textContent = tool.lendDate;
 
@@ -218,7 +226,7 @@
 <body>
     <div id="header">
         <div id="top-left">
-            <a href="index.jsp" class="custom-heading">具AIoT智能化管理與虛實整合優化路徑規劃之倉儲系統</a>
+            <a href="index.jsp" class="custom-heading">智能AIOT物流倉儲管理系統</a>
         </div>
         <div id="top-right">
             <a href="listelement.jsp">物品列表</a>
