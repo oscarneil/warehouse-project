@@ -101,7 +101,7 @@ if (session.getAttribute("userData") != null ){
                 dataType: 'json',
                 success: function(data) {
                     /* 下一行 0313 demo 用，只取id最後兩個物件 */
-                    data = data.sort((a, b) => a.id - b.id).slice(-2);
+                    data = data.sort((a, b) => a.id - b.id).slice(-10);
                     /* 上一行 0313 demo 用，只取id最後兩個物件 */
                     console.log(data);
                     const gridContainer = document.getElementById('grid-container');
@@ -125,10 +125,9 @@ if (session.getAttribute("userData") != null ){
                     ! (boolean) session.getAttribute("login") ) { %>
                 <a href="login.jsp">登入</a>
             <% } else {%>
-                <a href="listnewelement.jsp">新刀具借用</a>
-                <!-- <a href="listelement.jsp">物品列表</a> -->
+                <a href="listelement.jsp">物品列表</a>
                 <a href="preborrow.jsp">選取表</a>
-                <a href="returnExpensive.jsp">歸還列表</a>
+                <!-- <a href="prereturn.jsp">退還表</a> -->
                 <a href="history.jsp">紀錄</a>
                 <a href="logout">登出</a>
             <% } %>

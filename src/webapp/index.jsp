@@ -191,11 +191,12 @@ if (session.getAttribute("userData") != null ){
                     ! (boolean) session.getAttribute("login") ) { %>
                 <a href="login.jsp">登入</a>
             <% } else {%>
-                <a href="http://140.130.4.49:748/">產品履歷</a>
+                <!-- <a href="http://140.130.4.49:748/">產品履歷</a> -->
+                <a href="listnewelement.jsp">新刀具借用</a>
                 <a href="listelement.jsp">物品列表</a>
                 <a href="preborrow.jsp">選取表</a>
                 <a href="returnExpensive.jsp">歸還列表</a>
-                <a href="history.jsp">紀錄</a>
+                <!--<a href="history.jsp">紀錄</a>-->
                 <a href="logout">登出</a>
             <% } %>
         </div>
