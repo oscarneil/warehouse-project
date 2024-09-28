@@ -616,6 +616,42 @@ public class SQLConnection {
         }
     }
 
+    public Integer selectNodeIDCLimit1() {
+        try {
+            String query = "Select nodeID from nodedevice where deviceType='C' order by insertTime DESC limit 1";
+            Connection connection = DatabaseConnection.getConnection();
+            Statement state = connection.createStatement();
+            ResultSet rs = state.executeQuery(query);
+            if (!rs.next()) return null;
+            int nodeID = rs.getInt("nodeID");
+            rs.close();
+            state.close();
+            connection.close();
+            return nodeID;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Integer selectNodeIDELimit1() {
+        try {
+            String query = "Select nodeID from nodedevice where deviceType='E' order by insertTime DESC limit 1";
+            Connection connection = DatabaseConnection.getConnection();
+            Statement state = connection.createStatement();
+            ResultSet rs = state.executeQuery(query);
+            if (!rs.next()) return null;
+            int nodeID = rs.getInt("nodeID");
+            rs.close();
+            state.close();
+            connection.close();
+            return nodeID;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     //    public ArrayList<loadLendingData> loadLendingTools1() {
 //        String query = "SELECT s.Name name, SUM(1) quantity, MAX(l.ReturnDate) returnDate FROM lend l INNER JOIN storage s ON l.sNo = s.sNo INNER JOIN employee e ON l.eNo = e.eNo WHERE e.eNo = 1 GROUP BY l.sNo";
 //        ArrayList<loadLendingData> returnArray = new ArrayList<loadLendingData>();
@@ -821,6 +857,24 @@ public class SQLConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    public boolean isNewKnife(int qrCodeNo) {
+        String query = "select reg.isNewKnife isNewKnife from registeritem reg left join preborrow pb on reg.RiNo =pb.RiNo where pb.QRCodeNo= ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, qrCodeNo);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getBoolean("isNewKnife");
+                } else {
+                    return false;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

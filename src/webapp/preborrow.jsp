@@ -11,7 +11,7 @@ if (session.getAttribute("userData") != null ){
 <!DOCTYPE html>
 <html>
 <head>
-    <title>智能AIOT物流倉儲管理系統</title>
+    <title>智慧倉儲管理系統</title>
     <link rel="stylesheet" href="assets/css/main.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
@@ -200,7 +200,7 @@ if (session.getAttribute("userData") != null ){
 <body>
     <div id="header">
         <div id="top-left">
-            <a href="index.jsp" class="custom-heading">智能AIOT物流倉儲管理系統</a>
+            <a href="index.jsp" class="custom-heading">智慧倉儲管理系統</a>
         </div>
         <div id="top-right">
             <% if (session.getAttribute("login") == null || 

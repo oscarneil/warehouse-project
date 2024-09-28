@@ -1,4 +1,5 @@
 package gjt.usblab.Servlet;
+
 import java.io.*;
 import java.security.SecureRandom;
 
@@ -36,7 +37,7 @@ public class sendBorrowServlet extends HttpServlet {
         // amount
         // user id
         HttpSession s = request.getSession();
-        if (s.getAttribute("userData") != null){
+        if (s.getAttribute("userData") != null) {
             userData uData = (userData) s.getAttribute("userData");
 
             // create new QRCode that not exists
@@ -47,13 +48,12 @@ public class sendBorrowServlet extends HttpServlet {
             int qrCodeID = Server.getInstance().sqlConnection.addQRCode(qrCode);
             // update PreBorrow where eNo = eNo and QRCode = null
             System.out.println(qrCodeID);
-            Server.getInstance().sqlConnection.updatePBItemWithQRCode(uData.eNo,qrCodeID);
+            Server.getInstance().sqlConnection.updatePBItemWithQRCode(uData.eNo, qrCodeID);
             // redirect to  pickingpanel.jsp
             uData.setPreBorrowCode(qrCodeID);
             uData.setPreBorrowCodeURL(path);
             response.sendRedirect("pickingpanel.jsp");
-        }   
-        else response.sendRedirect("index.jsp");
+        } else response.sendRedirect("index.jsp");
     }
 
 }

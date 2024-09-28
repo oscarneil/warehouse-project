@@ -27,6 +27,8 @@ public class pickingpanelAPI extends HttpServlet {
 
     public class retVal {
         public ArrayList<itemData> datas = new ArrayList<>();
+
+        public boolean isNewKnife;
         public itemData mainData;
         public String QRCodeURL;
         public long minutes;
@@ -37,8 +39,9 @@ public class pickingpanelAPI extends HttpServlet {
         public boolean end;
         public boolean pop;
         public itemData popData;
-
         public List<Integer> paths = new ArrayList<>();
+
+        public boolean QRCodeEnable;
 
         public retVal() {
             finish = false;
@@ -76,7 +79,6 @@ public class pickingpanelAPI extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         // every 1 sec may refresh
-        HttpSession session = request.getSession();
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         request.setCharacterEncoding("UTF-8");
@@ -84,10 +86,11 @@ public class pickingpanelAPI extends HttpServlet {
         String end = request.getParameter("end");
         retVal result = new retVal();
         HttpSession s = request.getSession();
+        result.QRCodeEnable = false;
         if (s.getAttribute("userData") != null && ((userData) s.getAttribute("userData")).inPreBorrow) {
             userData uData = (userData) s.getAttribute("userData");
             result.setQRCodeURL(uData.PreBorrowQRCodeURL);
-
+            result.isNewKnife = Server.getInstance().sqlConnection.isNewKnife(uData.PreBorrowQRCode);
             int eNo = uData.eNo;
             int QRCodeNo = uData.PreBorrowQRCode;
 
@@ -164,10 +167,10 @@ public class pickingpanelAPI extends HttpServlet {
                     lastQRCodeNo = Integer.valueOf(QRCodeNo);
                 }
 
+                result.QRCodeEnable = true;
+
             } else {
-                // disable 
-
-
+                // disable
                 result.wait = true; // wait for qrcode
                 // debug
                 //QRCodeBridge.codeEnable(QRCodeNo);

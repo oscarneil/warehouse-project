@@ -52,6 +52,15 @@
         <url-pattern>/api/lists</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>api_listNew</servlet-name>
+        <servlet-class>gjt.usblab.API.listNewElement</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>api_listNew</servlet-name>
+        <url-pattern>/api/listNew</url-pattern>
+    </servlet-mapping>
 
     <servlet>
         <servlet-name>pbupdate</servlet-name>

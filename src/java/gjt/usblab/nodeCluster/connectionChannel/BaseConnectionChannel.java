@@ -86,10 +86,13 @@ public abstract class BaseConnectionChannel {
                         }
                         int QRCodeNo = (int) ret.get(0).get("QRCodeNo");
                         QRCodeBridge.codeEnable(QRCodeNo);
-                        int nodeID = Server.getInstance().sqlConnection.selectNodeIDALimit1();
-                        System.out.println("------------------nodeID:" + nodeID + "-------------");
-                        nodeCluster.getInstance().getNode(nodeID).dataChannel.ProcessSend("01L$GRNON-");
-                        System.out.println("------------------01L$GRNON-------------");
+
+                        if (!Server.getInstance().sqlConnection.isNewKnife(QRCodeNo)) {
+                            int nodeID = Server.getInstance().sqlConnection.selectNodeIDALimit1();
+                            System.out.println("------------------nodeID:" + nodeID + "-------------");
+                            nodeCluster.getInstance().getNode(nodeID).dataChannel.ProcessSend("01L$GRNON-");
+                            System.out.println("------------------01L$GRNON-------------");
+                        }
                     }
                     break;
 
@@ -109,7 +112,8 @@ public abstract class BaseConnectionChannel {
                             lendItemBridge.consumableUpdatePreborrow(GetPacketCount, ConsumableCabinetID);
                             StockResultData stockResultData = stocktakingBridge.stocktakingConsumable(ConsumableWeight, ConsumableCabinetID);
                             String returnPacketMessage = "01C$name:" + stockResultData.getProductName() + "$amount:" + String.format("%d", stockResultData.getStockCount()) + "-";
-                            nodeCluster.getInstance().getNode(nodeCluster.instance.lastNodeID).dataChannel.ProcessSend(returnPacketMessage);
+                            int nodeID = Server.getInstance().sqlConnection.selectNodeIDCLimit1();
+                            nodeCluster.getInstance().getNode(nodeID).dataChannel.ProcessSend(returnPacketMessage);
                         } else {
                             StockResultData stockResultData = stocktakingBridge.stocktakingConsumable(ConsumableWeight, ConsumableCabinetID);
                         }
@@ -126,7 +130,8 @@ public abstract class BaseConnectionChannel {
                         String UserRFID = packetValueInstance.getPacketMessage().get(1);
                         StockResultData stockResultData = stocktakingBridge.stocktakingExpensive(ExpensiveBarcode, UserRFID);
                         String returnPacketMessage = "01E$name:" + stockResultData.getProductName() + "$amount:" + String.format("%d", stockResultData.getStockCount()) + "-";
-                        nodeCluster.getInstance().getNode(nodeCluster.instance.lastNodeID).dataChannel.ProcessSend(returnPacketMessage);
+                        int nodeID = Server.getInstance().sqlConnection.selectNodeIDELimit1();
+                        nodeCluster.getInstance().getNode(nodeID).dataChannel.ProcessSend(returnPacketMessage);
                     } else {
                         throw new InvalidPacketException("The count of packet is only two. Invalid packet format for expensive.");
                     }

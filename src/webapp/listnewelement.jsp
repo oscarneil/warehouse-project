@@ -11,7 +11,7 @@ if (session.getAttribute("userData") != null ){
 <!DOCTYPE html>
 <html>
 <head>
-    <title>智能AIOT物流倉儲管理系統</title>
+    <title>智慧倉儲管理系統</title>
     <style>
         /* Header styles */
         /* Header styles */
@@ -65,15 +65,16 @@ if (session.getAttribute("userData") != null ){
     <link rel="stylesheet" href="assets/css/main.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        function createGridItem(imageSrc, title, info,url,shelfNo) {
+        function createGridItem(imageSrc, title, info,url,cabinetNo) {
 
             const gridContainer = document.getElementById('grid-container');
             const gridItem = document.createElement('a');
             gridItem.className = 'grid-item';
             gridItem.setAttribute("href",url);
 
+
             const shelfT = document.createElement('h3');
-            shelfT.textContent = "櫃位編號："+shelfNo;
+            shelfT.textContent = "刀具格編號："+cabinetNo;
 
             
             const image = document.createElement('img');
@@ -97,7 +98,7 @@ if (session.getAttribute("userData") != null ){
         function loadElements() {
             $.ajax({
                 type: "GET",
-                url: "/main/api/lists", // The JSP to load elements
+                url: "/main/api/listNew", // The JSP to load elements
                 dataType: 'json',
                 success: function(data) {
                     /* 下一行 0313 demo 用，只取id最後兩個物件 */
@@ -108,7 +109,7 @@ if (session.getAttribute("userData") != null ){
                     gridContainer.innerHTML  = "";
                     for(var i = 0 ; i < data.length;i++){
                         var element = data[i];
-                        createGridItem(element.fullPath,element.name,"剩餘庫存 " +element.count,element.fullINFO_url,element.shelfNo);
+                        createGridItem(element.fullPath,element.name,"剩餘庫存 " +element.count,element.fullINFO_url,i+1);
                     }
                 }
             });
@@ -118,7 +119,7 @@ if (session.getAttribute("userData") != null ){
 <body>
     <div id="header">
         <div id="top-left">
-            <a href="index.jsp" class="custom-heading"> 智能AIOT物流倉儲管理系統</a>
+            <a href="index.jsp" class="custom-heading"> 智慧倉儲管理系統</a>
         </div>
         <div id="top-right">
             <% if (session.getAttribute("login") == null || 

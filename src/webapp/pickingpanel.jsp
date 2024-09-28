@@ -11,7 +11,7 @@ if (session.getAttribute("userData") != null ){
 <!DOCTYPE html>
 <html>
 <head>
-    <title>智能AIOT物流倉儲管理系統</title>
+    <title>智慧倉儲管理系統</title>
     <link rel="stylesheet" href="assets/css/main.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
@@ -73,9 +73,7 @@ if (session.getAttribute("userData") != null ){
                 }
             });
         }
-
         function loadInfo() {
-            
             $.ajax({
                 type: "GET",
                 url: "/main/api/picking", // The JSP to load elements
@@ -151,94 +149,112 @@ if (session.getAttribute("userData") != null ){
                     tr1.appendChild(td11);
                     tr1.appendChild(td12);
                     tr1.appendChild(td13);
-
                     tables.appendChild(tr1);
-                    for (var i = 0; i < data.datas.length;i++){
-                        var item = data.datas[i];
-                        const tr = document.createElement('tr');
-                        const td1 = document.createElement('td');
-                        td1.innerText = ""+item.name;
-                        const td2 = document.createElement('td');
-                        td2.innerText = ""+item.holdCount +"/"+item.count+ "("+(item.holdCount * 100 / item.count)+"%)";
-                        const td3 = document.createElement('td');
-                        td3.innerText = "1 公尺";
+                    let originalRow = document.getElementById('originalRow');
+                    let replaceRow = document.getElementById('replaceRow');
+                    let rightButton = document.getElementById('right-button');
+                    let leftButton = document.getElementById('left-button');
+                    if(!data.isNewKnife){
 
-                        tr.appendChild(td1);
-                        tr.appendChild(td2);
-                        tr.appendChild(td3);
+                        originalRow.classList.remove('hidden');
+                        replaceRow.classList.add('hidden');
 
-                        tables.appendChild(tr);
-                    }
+                        for (var i = 0; i < data.datas.length;i++){
+                            var item = data.datas[i];
+                            const tr = document.createElement('tr');
+                            const td1 = document.createElement('td');
+                            td1.innerText = ""+item.name;
+                            const td2 = document.createElement('td');
+                            td2.innerText = ""+item.holdCount +"/"+item.count+ "("+(item.holdCount * 100 / item.count)+"%)";
+                            const td3 = document.createElement('td');
+                            td3.innerText = "1 公尺";
 
-                    // draw map
+                            tr.appendChild(td1);
+                            tr.appendChild(td2);
+                            tr.appendChild(td3);
 
-                    // Get the canvas element and its 2D drawing context
-                    var canvas = document.getElementById("map");
-                    var ctx = canvas.getContext("2d");
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                            tables.appendChild(tr);
+                        }
 
-                    // Set the width and height of each cell
-                    var cellWidth = 50;
-                    var cellHeight = 50;
-                    var circleRadius = 30;
-                    // Define the pattern as an array of rows
-                    var pattern = [
-                        ".......",
-                        ".##.##.",
-                        ".......",
-                        "   .   ",
-                        "###.###",
-                        ".......",
-                        "   .   ",
-                    ];
-                    
-                    var num = 0;
-                    let PathCircleOrder = 0;
-                    // Loop through the pattern and draw each cell
-                    for (var i = 0; i < pattern.length; i++) {
-                        for (var j = 0; j < pattern[i].length; j++) {
-                            var cell = pattern[i][j];
-                            // Calculate the top-left corner of the cell
-                            var x = j * cellWidth;
-                            var y = i * cellHeight;
-                            if (cell === "#") {
-                                // Draw a filled rectangle (black)
-                                ctx.fillStyle = "black";
-                                ctx.fillRect(x, y, cellWidth, cellHeight);
-                            } else if (cell === ".") {
-                                if (data.paths != null && data.paths.includes(num)) {
-                                    ctx.fillStyle = color;
-                                    if(PathCircleOrder===0){
-                                      ctx.fillStyle = "red";
+                        // draw map
+
+                        // Get the canvas element and its 2D drawing context
+                        var canvas = document.getElementById("map");
+                        var ctx = canvas.getContext("2d");
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                        // Set the width and height of each cell
+                        var cellWidth = 50;
+                        var cellHeight = 50;
+                        var circleRadius = 30;
+                        // Define the pattern as an array of rows
+                        var pattern = [
+                            ".......",
+                            ".##.##.",
+                            ".......",
+                            "   .   ",
+                            "###.###",
+                            ".......",
+                            "   .   ",
+                        ];
+
+                        var num = 0;
+                        let PathCircleOrder = 0;
+                        // Loop through the pattern and draw each cell
+
+                        for (var i = 0; i < pattern.length; i++) {
+                            for (var j = 0; j < pattern[i].length; j++) {
+                                var cell = pattern[i][j];
+                                // Calculate the top-left corner of the cell
+                                var x = j * cellWidth;
+                                var y = i * cellHeight;
+                                if (cell === "#") {
+                                    // Draw a filled rectangle (black)
+                                    ctx.fillStyle = "black";
+                                    ctx.fillRect(x, y, cellWidth, cellHeight);
+                                } else if (cell === ".") {
+                                    if (data.paths != null && data.paths.includes(num)) {
+                                        ctx.fillStyle = color;
+                                        if(PathCircleOrder===0){
+                                          ctx.fillStyle = "red";
+                                        }
+
+                                        PathCircleOrder++;
+
+                                        ctx.beginPath();
+                                        ctx.arc(x + cellWidth / 2, y + cellHeight / 2, circleRadius-10, 0, 2 * Math.PI);
+                                        ctx.fill();
+                                    }
+                                    else {
+                                        ctx.fillStyle = "black";
+                                        ctx.beginPath();
+                                        ctx.arc(x + cellWidth / 2, y + cellHeight / 2, circleRadius-10, 0, 2 * Math.PI);
+                                        ctx.stroke();
                                     }
 
-                                    PathCircleOrder++;
 
-                                    ctx.beginPath();
-                                    ctx.arc(x + cellWidth / 2, y + cellHeight / 2, circleRadius-10, 0, 2 * Math.PI);
-                                    ctx.fill();
                                 }
-                                else {
-                                    ctx.fillStyle = "black";
-                                    ctx.beginPath();
-                                    ctx.arc(x + cellWidth / 2, y + cellHeight / 2, circleRadius-10, 0, 2 * Math.PI);
-                                    ctx.stroke();
-                                }
-                                
-                                
+                                num++;
                             }
-                            num++;
                         }
+                    }else{
+                            originalRow.classList.add('hidden');
+                            replaceRow.classList.remove('hidden');
+                            leftButton.classList.add('buttonDisabledAll');
+                              if (data.QRCodeEnable) {
+                                    rightButton.classList.add('buttonDisabledNone');
+                              } else {
+                                    rightButton.classList.add('buttonDisabledHalf');
+                              }
                     }
+
                     if (data.pop){
                         // when lend pop item information and click confirm to continue
                         const lendModal = document.getElementById('lendModal');
                         lendModal.style.display = 'block';
-
                         document.getElementById('ITEM-NAME').innerText = "物品名稱："+data.popData.name;
                         document.getElementById('BAR-CODE').innerText = "物品編號："+data.popData.filename;
                     }
-
                 }
             });
             next = false;
@@ -246,6 +262,95 @@ if (session.getAttribute("userData") != null ){
         }
     </script>
     <style>
+
+        #image-container {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 100%;
+                }
+
+        .borrow-button {
+            opacity: 0; /* 初始透明度為 0 */
+            pointer-events: none; /* 禁用點擊事件 */
+            margin: 0 10px; /* 按鈕之間的間距 */
+        }
+
+        .borrow-button.active {
+            opacity: 1; /* 當按鈕激活時透明度設為 1 */
+            pointer-events: auto; /* 啟用點擊事件 */
+        }
+
+        #vending-machine-img {
+            width: 400px; /* 圖片寬度 */
+            height: 300px; /* 圖片高度 */
+            margin-right: 250px;
+            margin-left: 250px;
+        }
+
+        .empty-space {
+            height: 100px; /* 空白區域高度 */
+        }
+
+        .hidden {
+            display: none; /* 在 CSS 中定義 .hidden 類別 */
+        }
+
+        .buttonDisabledHalf {
+            opacity: 0.4;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+
+        .buttonDisabledAll {
+            opacity: 0;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+        .buttonDisabledNone {
+            opacity: 1;
+            pointer-events: auto;
+            cursor: auto;
+        }
+
+        .buttonDisabledFun {
+            opacity: 1;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+
+        .borrow-button {
+            display: flex; /* 使用彈性佈局 */
+            align-items: center; /* 圖片和文字垂直置中 */
+            background-color: #ffffff; /* 按鈕背景顏色 */
+            border: 4px solid #ffa500; /* 按鈕邊框顏色 (橘色) */
+            border-radius: 8px; /* 按鈕圓角 */
+            padding: 10px 20px; /* 內邊距 */
+            cursor: pointer; /* 滑鼠指標變成手型 */
+            transition: background-color 0.3s; /* 背景顏色過渡效果 */
+            margin-top: 10px; /* 與圖片之間的間距 */
+        }
+
+        /* 按鈕的圖片樣式 */
+        .button-image {
+            width: 45px; /* 按鈕圖像的寬度 */
+            height: auto; /* 自適應高度 */
+            margin-right: 10px; /* 圖片與文字之間的間距 */
+        }
+
+        /* 按鈕的文字樣式 */
+        .button-text {
+            font-size: 25px; /* 文字大小 */
+            color: #ffa500; /* 文字顏色 (橘色) */
+            font-family: Arial, sans-serif; /* 字體 */
+            font-weight: bold;
+        }
+
+        /* 滑鼠懸停效果 */
+        .borrow-button:hover {
+            background-color: #ffe4b5; /* 背景顏色變亮 (米黃色) */
+        }
+
         body {
             font-size: 22px;
             margin: 0px;
@@ -325,7 +430,7 @@ if (session.getAttribute("userData") != null ){
 <body>
     <div id="header">
         <div id="top-left">
-            <a href="index.jsp" class="custom-heading">智能AIOT物流倉儲管理系統</a>
+            <a href="index.jsp" class="custom-heading">智慧倉儲管理系統</a>
         </div>
         <div id="top-right">
             <% if (session.getAttribute("login") == null || 
@@ -380,12 +485,26 @@ if (session.getAttribute("userData") != null ){
 
                          <button id="nextbtn" class="workorderbtn">下一樣物品</button>
                           <!-- 0824 展覽後打開 -->
-
                     </div>
                 </div>
-                <div class="row row3" >
+                <div class="row row3" id="originalRow">
                     <!-- Third row: Mini map -->
                     <canvas id="map" width="350" height="400"></canvas>
+                </div>
+
+                <div class="row row3" id="replaceRow">
+                    <div id="image-container">
+                        <button class="borrow-button" id="left-button">
+                            <img src="./file/borrowItem.png" class="button-image">
+                            <span class="button-text">借用刀具</span>
+                        </button>
+                        <img src="./file/vending-machine.png" id="vending-machine-img" alt="Vending Machine">
+                        <button class="borrow-button" id="right-button">
+                            <img src="./file/borrowItem.png" class="button-image">
+                            <span class="button-text">借用刀具</span>
+                        </button>
+                    </div>
+                    <div class="empty-space"></div>
                 </div>
 
                 <div class="row row2" >
@@ -408,13 +527,26 @@ if (session.getAttribute("userData") != null ){
                 
             </div>
             <script>
+                /*
                 setInterval(loadInfo,1000);
-
                 $(document).ready(function() {
                     loadSwitchState();
                        setInterval(function() {
                             loadSwitchState();
                         }, 1000);
+                });
+                */
+
+                $(document).ready(function() {
+                    // 初始化調用 loadSwitchState 和 loadInfo
+                    loadSwitchState();
+                    loadInfo();
+
+                    // 設置每秒調用 loadInfo 和 loadSwitchState 的定時器
+                    setInterval(function() {
+                        loadInfo();
+                        loadSwitchState();
+                    }, 1000);
                 });
 
                 document.addEventListener('DOMContentLoaded', function() {
@@ -434,11 +566,12 @@ if (session.getAttribute("userData") != null ){
                             }
                         });
                     });
+
                 });
 
                 const nextButton = document.getElementById('nextbtn');
                 const closeButton = document.getElementById('closebtn');
-
+                const rightButton = document.getElementById('right-button');
                 nextButton.addEventListener('click', () => {
                     next = true;
                     loadInfo();
@@ -448,6 +581,17 @@ if (session.getAttribute("userData") != null ){
                     end = true;
                     loadInfo();
                     turnOffLED()
+                });
+
+                rightButton.addEventListener('click', () => {
+                    const rightButtonImg  = rightButton.querySelector('.button-image');
+                    rightButtonImg.src = "./file/launchKnife.png";
+                    const rightButtonText = rightButton.querySelector('.button-text');
+                    rightButtonText.textContent = "刀具推出中...";
+                    rightButtonText.style.color = "#00BB00";
+                    rightButton.style.borderColor = "#00BB00";
+                    rightButton.style.backgroundColor = "#CEFFCE"
+                    rightButton.classList.add('buttonDisabledFun');
                 });
             </script>
 

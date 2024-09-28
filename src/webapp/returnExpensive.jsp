@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>智能AIOT物流倉儲管理系統</title>
+    <title>智慧倉儲管理系統</title>
     <style>
         body {
             font-size: 22px;
@@ -226,7 +226,7 @@
 <body>
     <div id="header">
         <div id="top-left">
-            <a href="index.jsp" class="custom-heading">智能AIOT物流倉儲管理系統</a>
+            <a href="index.jsp" class="custom-heading">智慧倉儲管理系統</a>
         </div>
         <div id="top-right">
             <a href="listelement.jsp">物品列表</a>
