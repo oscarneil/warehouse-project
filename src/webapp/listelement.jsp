@@ -46,21 +46,36 @@ if (session.getAttribute("userData") != null ){
 
         /* Content block styles */
         #content {
-            margin: 20px;
-            text-align: center;
+            width: auto;
+            margin: 0 auto;
         }
 
-        /* Content block styles */
-        #content {
-            margin: 20px;
-            text-align: center; /* Center-align the content */
+        #grid-container {
+            display: grid;
+            gap: 20px;
+            padding: 50px 100px;
+            margin: 0 auto;
+            box-sizing: border-box;
+            width: auto; /* 擴展至100%寬 */
+            max-width: 100%; /* 設定最大寬度，根據需求調整 */
+            grid-template-columns: repeat(5, 1fr);
+        }
+        .grid-item {
+            display: grid;
+            justify-items: center;
+            align-items: center; /* 水平置中 */
         }
 
-            /* Center-align the form within the content block */
-        #content form {
-            display: inline-block;
-            text-align: left; /* Reset the text alignment for form elements */
+        @media only screen
+          and (min-device-width: 1200px)
+          and (max-device-width: 1250px)
+          and (orientation: landscape)
+          and (-webkit-min-device-pixel-ratio: 2) {
+            #grid-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
+
     </style>
     <link rel="stylesheet" href="assets/css/main.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

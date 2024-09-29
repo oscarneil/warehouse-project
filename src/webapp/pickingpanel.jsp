@@ -284,8 +284,8 @@ if (session.getAttribute("userData") != null ){
         #vending-machine-img {
             width: 400px; /* 圖片寬度 */
             height: 300px; /* 圖片高度 */
-            margin-right: 250px;
-            margin-left: 250px;
+            margin-right: 400px;
+            margin-left: 400px;
         }
 
         .empty-space {
@@ -416,13 +416,18 @@ if (session.getAttribute("userData") != null ){
         }
 
         @media only screen
-          and (min-device-width: 768px)
-          and (max-device-width: 1024px)
+          and (min-device-width: 1200px)
+          and (max-device-width: 1250px)
           and (orientation: landscape)
           and (-webkit-min-device-pixel-ratio: 2) {
             #showitem, #itemname {
                 margin-left: 70px;
             }
+            #vending-machine-img{
+                margin-right: 100px;
+                margin-left: 100px;
+            }
+
         }
 
     </style>
