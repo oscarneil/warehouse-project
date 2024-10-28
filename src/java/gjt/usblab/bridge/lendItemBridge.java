@@ -38,7 +38,7 @@ public class lendItemBridge {
     // should get code (eNo -> QRCodeNo or just eNo -> code)
     // and update PreBorrow from code
     // for storage 
-    public static void addItem(String barcode, String RFID) {
+    public static void addItem(String barcode, String RFID, Boolean isNewKnife) {
         ArrayList<HashMap<String, Object>> ret = Server.getInstance().sqlConnection.cmdFetchData(
                 "SELECT * FROM Employee WHERE RFIDNo = '" + RFID + "'",
                 "eNo"
@@ -60,7 +60,13 @@ public class lendItemBridge {
             return;
         }
 
-        int sNo = (int) ret2.get(0).get("sNo");
+        int sNo;
+        if (ret2.size() == 2 && isNewKnife) {
+            sNo = (int) ret2.get(1).get("sNo");
+        } else {
+            sNo = (int) ret2.get(0).get("sNo");
+        }
+
 
         String Name = (String) ret2.get(0).get("Name");
 
@@ -78,6 +84,7 @@ public class lendItemBridge {
                 "PbNo",
                 "HoldCount"
         );
+
         int PbNo = (int) ret3.get(0).get("PbNo");
         int holdcount = (int) ret3.get(0).get("HoldCount");
 
@@ -103,7 +110,7 @@ public class lendItemBridge {
     }
 
     // for consumables
-    // when change weight 
+    // when change weight
     static Object lock = new Object();
 
     public static void addItem2(String RFID, String shID) {

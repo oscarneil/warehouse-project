@@ -95,6 +95,8 @@ if (session.getAttribute("userData") != null ){
             const image = document.createElement('img');
             image.src = imageSrc;
             image.alt = title;
+            image.style.width = "160px"; // 設置寬度
+            image.style.height = "160px"; // 設置高度
 
             const heading = document.createElement('h3');
             heading.textContent = title;
@@ -116,9 +118,7 @@ if (session.getAttribute("userData") != null ){
                 url: "/main/api/listNew", // The JSP to load elements
                 dataType: 'json',
                 success: function(data) {
-                    /* 下一行 0313 demo 用，只取id最後兩個物件 */
                     data = data.sort((a, b) => a.id - b.id).slice(-10);
-                    /* 上一行 0313 demo 用，只取id最後兩個物件 */
                     console.log(data);
                     const gridContainer = document.getElementById('grid-container');
                     gridContainer.innerHTML  = "";
@@ -141,7 +141,9 @@ if (session.getAttribute("userData") != null ){
                     ! (boolean) session.getAttribute("login") ) { %>
                 <a href="login.jsp">登入</a>
             <% } else {%>
+                <a href="listnewelement.jsp">新刀具借用</a>
                 <a href="listelement.jsp">物品列表</a>
+                <a href="returnExpensive.jsp">歸還列表</a>
                 <a href="preborrow.jsp">選取表</a>
                 <!-- <a href="prereturn.jsp">退還表</a> -->
                 <a href="history.jsp">紀錄</a>

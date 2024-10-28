@@ -1,4 +1,5 @@
 package gjt.usblab.API;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -11,6 +12,7 @@ import java.util.TreeMap;
 import javax.servlet.*;             // Tomcat 9
 import javax.servlet.http.*;        // Tomcat 9
 import javax.servlet.annotation.*;  // Tomcat 9
+
 import com.google.gson.*;
 
 import gjt.usblab.bridge.lendItemBridge;
@@ -21,9 +23,9 @@ public class addItem extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         HttpSession session = request.getSession();
         response.setContentType("application/json");
-        TreeMap<String,String> mp = new TreeMap<String,String>();
+        TreeMap<String, String> mp = new TreeMap<String, String>();
 
-        lendItemBridge.addItem("11263137","7777777");
+        lendItemBridge.addItem("11263137", "8460BD33", false);
 
         String jsonData = new Gson().toJson(mp);
         response.getWriter().write(jsonData);

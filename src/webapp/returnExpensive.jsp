@@ -229,6 +229,7 @@
             <a href="index.jsp" class="custom-heading">智慧倉儲管理系統</a>
         </div>
         <div id="top-right">
+            <a href="listnewelement.jsp">新刀具借用</a>
             <a href="listelement.jsp">物品列表</a>
             <a href="preborrow.jsp">選取表</a>
             <a href="history.jsp">紀錄</a>

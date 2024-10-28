@@ -98,7 +98,7 @@ public abstract class BaseConnectionChannel {
 
                 //  03C:cabinetID:weight:RFID (耗材: three packet messages)
                 case "C":
-                    System.out.println("收到交易封包(Access)，設備類型:" + packetValueInstance.getPacketType() + "，封包內容:" + packetValueInstance.getPacketMessage());
+                    System.out.println("收到交易封包(Consumable)，設備類型:" + packetValueInstance.getPacketType() + "，封包內容:" + packetValueInstance.getPacketMessage());
                     if (packetValueInstance.getPacketMessage().size() == 3) {
                         int ConsumableCabinetID = Integer.parseInt(packetValueInstance.getPacketMessage().get(0), 2);
                         float ConsumableWeight = Float.parseFloat(packetValueInstance.getPacketMessage().get(1));
@@ -122,18 +122,34 @@ public abstract class BaseConnectionChannel {
                     }
                     break;
 
-                //  03C:barcode:RFID (貴重: two packets message)
+                //  03E:barcode:RFID (貴重: two packets message)
                 case "E":
-                    System.out.println("收到交易封包(Access)，設備類型:" + packetValueInstance.getPacketType() + "，封包內容:" + packetValueInstance.getPacketMessage());
+                    System.out.println("收到交易封包(Expensive)，設備類型:" + packetValueInstance.getPacketType() + "，封包內容:" + packetValueInstance.getPacketMessage());
                     if (packetValueInstance.getPacketMessage().size() == 2) {
                         String ExpensiveBarcode = packetValueInstance.getPacketMessage().get(0);
                         String UserRFID = packetValueInstance.getPacketMessage().get(1);
-                        StockResultData stockResultData = stocktakingBridge.stocktakingExpensive(ExpensiveBarcode, UserRFID);
+                        StockResultData stockResultData = stocktakingBridge.stocktakingExpensive(ExpensiveBarcode, UserRFID, false);
                         String returnPacketMessage = "01E$name:" + stockResultData.getProductName() + "$amount:" + String.format("%d", stockResultData.getStockCount()) + "-";
                         int nodeID = Server.getInstance().sqlConnection.selectNodeIDELimit1();
                         nodeCluster.getInstance().getNode(nodeID).dataChannel.ProcessSend(returnPacketMessage);
                     } else {
                         throw new InvalidPacketException("The count of packet is only two. Invalid packet format for expensive.");
+                    }
+                    break;
+                //  03V:barcode:RFID (販賣機: two packets message)
+                case "V":
+                    System.out.println("收到交易封包(Vendor)，設備類型:" + packetValueInstance.getPacketType() + "，封包內容:" + packetValueInstance.getPacketMessage());
+                    if (packetValueInstance.getPacketMessage().size() == 2) {
+                        String VendingBarcode = packetValueInstance.getPacketMessage().get(0);
+                        String UserRFID = packetValueInstance.getPacketMessage().get(1);
+                        StockResultData stockResultData = stocktakingBridge.stocktakingExpensive(VendingBarcode, UserRFID, true);
+//                        沒有掃碼器下面這行註解
+//                        Server.getInstance().sqlConnection.reduceNewKnifeCount(8, 1);
+//                        String returnPacketMessage = "01V$name:" + stockResultData.getProductName() + "$amount:" + String.format("%d", stockResultData.getStockCount()) + "-";
+//                        int nodeID = Server.getInstance().sqlConnection.selectNodeIDVLimit1();
+//                        nodeCluster.getInstance().getNode(nodeID).dataChannel.ProcessSend(returnPacketMessage);
+                    } else {
+                        throw new InvalidPacketException("The count of packet is only two. Invalid packet format for vending.");
                     }
             }
         }
@@ -170,48 +186,15 @@ public abstract class BaseConnectionChannel {
                     Server.getInstance().sqlConnection.addNodeDevice(deviceID, packetValueInstance.getPacketType(), nodeDeviceIndex.get());
                     nodeDeviceIndex.getAndAdd(1);
                     break;
+
+                case "V":
+                    System.out.println("Vending: nodeDeviceIndex.get():" + nodeDeviceIndex.get());
+                    System.out.println("收到開始封包(Vending)，設備類型:" + packetValueInstance.getPacketType() + "，設備ID:" + deviceID + "，nodeID:" + nodeCluster.instance.lastNodeID);
+                    Server.getInstance().sqlConnection.addNodeDevice(deviceID, packetValueInstance.getPacketType(), nodeDeviceIndex.get());
+                    nodeDeviceIndex.getAndAdd(1);
+                    break;
             }
         }
-
-//            if (c.equalsIgnoreCase("rfid")){
-//                this.instance.setLastRFID(result);
-//            }
-//            if (c.equalsIgnoreCase("consum")){
-//                lendItemBridge.addItem2(this.instance.RFID,result);
-//            }
-//            if (c.equalsIgnoreCase("barcode")){
-//                System.out.println(this.instance + " RFID: " + this.instance.RFID + " get BARCODE " + result);
-//          //       this should be lend.
-//                lendItemBridge.addItem(result,this.instance.RFID);
-//            }
-
-        //0315 比賽用
-//            if(c.equalsIgnoreCase("11263137")){
-//                SQLConnection sc1 = new SQLConnection();
-//                int nodeNumber = sc1.searchLastQRCodeNum();
-//                System.out.println(this.instance + " enable QR CODE: " + result);
-//                QRCodeBridge.codeEnable(nodeNumber);
-//            }
-        //0315 比賽用
-
-//            if (c.equalsIgnoreCase("id")){
-//                int num = 0;
-//                try{
-//                    num = Integer.parseInt(result);
-//                }catch(Exception e){
-//                    System.out.println(this.instance + " err:" + e.getMessage());
-//
-//                }
-//                this.instance.setDeviceID(num);
-//            }else if (c.equalsIgnoreCase("type")){
-//                int num = 0;
-//                try{
-//                    num = Integer.parseInt(result);
-//                }catch(Exception e){
-//                    System.out.println(this.instance + " err:" + e.getMessage());
-//                }
-//                this.instance.setType(nodeType.getFromID(num));
-//            }
     }
 
 

@@ -4,7 +4,7 @@ import gjt.usblab.Server.Server;
 import gjt.usblab.data.StockResultData;
 
 public class stocktakingBridge {
-    public static StockResultData stocktakingExpensive(String Barcode, String UserRFID) {
+    public static StockResultData stocktakingExpensive(String Barcode, String UserRFID, Boolean isNewKnife) {
         if (Server.getInstance().sqlConnection.searchReturnableStatus()) {
             int lendNum = Server.getInstance().sqlConnection.searchReturnLendNum(Barcode);
             if (lendNum != 0) {
@@ -14,10 +14,10 @@ public class stocktakingBridge {
                 System.out.println("NO any lend knife.");
             }
         } else {
-            lendItemBridge.addItem(Barcode, UserRFID);
-            Server.getInstance().sqlConnection.reduceExpensiveCount(Barcode);
+            lendItemBridge.addItem(Barcode, UserRFID, isNewKnife);
+            Server.getInstance().sqlConnection.reduceExpensiveCount(Barcode, isNewKnife);
         }
-        StockResultData stockResultData = Server.getInstance().sqlConnection.stocktakingExpensive(Barcode);
+        StockResultData stockResultData = Server.getInstance().sqlConnection.stocktakingExpensive(Barcode, isNewKnife);
         return stockResultData;
     }
 

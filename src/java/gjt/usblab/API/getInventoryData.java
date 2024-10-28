@@ -19,8 +19,8 @@ public class getInventoryData extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         request.setCharacterEncoding("UTF-8");
-        int screwsPacket = Server.getInstance().sqlConnection.stocktakingConsumable2(1);
-        int knifeCount = Server.getInstance().sqlConnection.stocktakingExpensive("11263137").getStockCount();
+        int screwsPacket = Server.getInstance().sqlConnection.stocktakingConsumable2(0);
+        int knifeCount = Server.getInstance().sqlConnection.stocktakingExpensive("11263137", false).getStockCount();
         inventoryData inventoryData = new inventoryData(knifeCount, screwsPacket);
         String jsonData = new Gson().toJson(inventoryData);
         response.getWriter().write(jsonData);

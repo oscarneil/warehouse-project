@@ -11,6 +11,8 @@ import java.util.UUID;
 import gjt.usblab.data.StockResultData;
 import gjt.usblab.data.loadLendingData;
 import gjt.usblab.data.userData;
+import gjt.usblab.data.newKnifeDate;
+
 
 public class SQLConnection {
 
@@ -437,16 +439,34 @@ public class SQLConnection {
         }
     }
 
-    public StockResultData stocktakingExpensive(String BarcodeString) {
+    public StockResultData stocktakingExpensive(String BarcodeString, Boolean isNewKnife) {
         try {
-            String query = "SELECT " +
-                    "s.name NAME, s.Count COUNT " +
-                    "FROM " +
-                    "storage s " +
-                    "INNER JOIN " +
-                    "barcode b ON s.BCNo = b.BCNo " +
-                    "WHERE " +
-                    "b.Info = '" + BarcodeString + "'";
+            String query;
+            if (isNewKnife) {
+                query = "SELECT " +
+                        "s.name NAME, s.Count COUNT " +
+                        "FROM " +
+                        "storage s " +
+                        "INNER JOIN " +
+                        "barcode b ON s.BCNo = b.BCNo " +
+                        "INNER JOIN " +
+                        "registeritem r ON s.RiNo = r.RiNo " +
+                        "WHERE " +
+                        "b.Info = '" + BarcodeString + "'" +
+                        "and r.isNewKnife = 1";
+            } else {
+                query = "SELECT " +
+                        "s.name NAME, s.Count COUNT " +
+                        "FROM " +
+                        "storage s " +
+                        "INNER JOIN " +
+                        "barcode b ON s.BCNo = b.BCNo " +
+                        "INNER JOIN " +
+                        "registeritem r ON s.RiNo = r.RiNo " +
+                        "WHERE " +
+                        "b.Info = '" + BarcodeString + "'" +
+                        "and r.isNewKnife = 0";
+            }
             Connection connection = DatabaseConnection.getConnection();
             Statement state = connection.createStatement();
             ResultSet rs = state.executeQuery(query);
@@ -498,13 +518,23 @@ public class SQLConnection {
         }
     }
 
-    public void reduceExpensiveCount(String ExpensiveBarcode) {
+    public void reduceExpensiveCount(String ExpensiveBarcode, Boolean isNewKnife) {
         try {
             Connection connection = DatabaseConnection.getConnection();
             PreparedStatement insertSQL = connection.prepareStatement("UPDATE storage s " +
                     "INNER JOIN barcode b ON s.BCNo = b.BCNo " +
+                    "INNER JOIN registeritem r ON s.RiNo = r.RiNo " +
                     "SET s.Count = s.Count-1 " +
-                    "WHERE b.Info = ?");
+                    "WHERE r.newKnifeNum is null " +
+                    "and b.Info = ?");
+            if (isNewKnife) {
+                insertSQL = connection.prepareStatement("UPDATE storage s " +
+                        "INNER JOIN barcode b ON s.BCNo = b.BCNo " +
+                        "INNER JOIN registeritem r ON s.RiNo = r.RiNo " +
+                        "SET s.Count = s.Count-1 " +
+                        "WHERE r.newKnifeNum is not null " +
+                        "and b.Info = ?");
+            }
             insertSQL.setString(1, ExpensiveBarcode);
             int rowsAffected = insertSQL.executeUpdate();
             if (rowsAffected > 0) {
@@ -518,6 +548,28 @@ public class SQLConnection {
             e.printStackTrace();
         }
     }
+
+//    public void reduceNewKnifeCount(int newKnifeNum, int lendCount) {
+//        try {
+//            Connection connection = DatabaseConnection.getConnection();
+//            PreparedStatement insertSQL = connection.prepareStatement("UPDATE storage s " +
+//                    "INNER JOIN registeritem r ON s.RiNo = r.RiNo " +
+//                    "SET s.Count = s.Count-? " +
+//                    "WHERE r.newKnifeNum = ?");
+//            insertSQL.setInt(1, lendCount);
+//            insertSQL.setInt(2, newKnifeNum);
+//            int rowsAffected = insertSQL.executeUpdate();
+//            if (rowsAffected > 0) {
+//                System.out.println("Updated VendingCount in storage. Rows affected: " + rowsAffected);
+//            } else {
+//                System.out.println("No rows were updated. Barcode may not exist.");
+//            }
+//            insertSQL.close();
+//            connection.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public StockResultData stocktakingConsumable(float ConsumableWeight, int ConsumableCabinetID) {
         try {
@@ -652,6 +704,24 @@ public class SQLConnection {
         }
     }
 
+    public Integer selectNodeIDVLimit1() {
+        try {
+            String query = "Select nodeID from nodedevice where deviceType='V' order by insertTime DESC limit 1";
+            Connection connection = DatabaseConnection.getConnection();
+            Statement state = connection.createStatement();
+            ResultSet rs = state.executeQuery(query);
+            if (!rs.next()) return null;
+            int nodeID = rs.getInt("nodeID");
+            rs.close();
+            state.close();
+            connection.close();
+            return nodeID;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     //    public ArrayList<loadLendingData> loadLendingTools1() {
 //        String query = "SELECT s.Name name, SUM(1) quantity, MAX(l.ReturnDate) returnDate FROM lend l INNER JOIN storage s ON l.sNo = s.sNo INNER JOIN employee e ON l.eNo = e.eNo WHERE e.eNo = 1 GROUP BY l.sNo";
 //        ArrayList<loadLendingData> returnArray = new ArrayList<loadLendingData>();
@@ -768,8 +838,10 @@ public class SQLConnection {
             Connection connection = DatabaseConnection.getConnection();
             PreparedStatement insertSQL = connection.prepareStatement("UPDATE storage s " +
                     "INNER JOIN barcode b ON s.BCNo = b.BCNo " +
+                    "INNER JOIN registeritem r ON s.RiNo = r.RiNo " +
                     "SET s.Count = s.Count+1 " +
-                    "WHERE b.Info = ?");
+                    "WHERE r.newKnifeNum IS NULL " +
+                    "AND b.Info = ?");
             insertSQL.setString(1, ExpensiveBarcode);
             int rowsAffected = insertSQL.executeUpdate();
             if (rowsAffected > 0) {
@@ -844,6 +916,26 @@ public class SQLConnection {
         }
     }
 
+    public void resetKnifeCount10(int newKnifeNum) {
+        String query = "UPDATE storage s INNER JOIN " +
+                "( SELECT s2.sNo FROM storage s2 INNER JOIN registeritem r ON s2.RiNo = r.RiNo WHERE r.newKnifeNum = ? ) " +
+                "AS s1 ON s.sNo = s1.sNo " +
+                "SET s.count = 10";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, newKnifeNum);
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected == 0) {
+                System.out.println("No rows updated. Check if the condition is correct.");
+            } else {
+                System.out.println("Reset newKnifeNum:" + newKnifeNum + " count:10");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public void returnLendKnife(int lendNum) {
         String query = "UPDATE lend l SET l.ReturnDate = now() WHERE l.INo = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -875,6 +967,25 @@ public class SQLConnection {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public newKnifeDate searchNewKnifePreBorrow() {
+        String query = "SELECT pb.PbNo, r.Name, r.newKnifeNum, pb.PbCount lendCount FROM preborrow pb INNER JOIN registeritem r ON pb.RiNo = r.RiNo WHERE r.newKnifeNum IS NOT NULL ORDER BY pb.PbNo DESC LIMIT 1";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+            newKnifeDate result = new newKnifeDate();
+            if (!rs.next()) {
+                return null;
+            } else {
+                result.setNewknifeNum(rs.getInt("newKnifeNum"));
+                result.setLendCount(rs.getInt("lendCount"));
+                return result;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

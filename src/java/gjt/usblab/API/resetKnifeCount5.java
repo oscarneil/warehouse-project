@@ -20,6 +20,9 @@ public class resetKnifeCount5 extends HttpServlet {
         Server.getInstance().sqlConnection.deleteLendPreBorrow();
         Server.getInstance().sqlConnection.deleteLendData();
         Server.getInstance().sqlConnection.resetKnifeCount5();
+        for (int i = 1; i < 11; i++) {
+            Server.getInstance().sqlConnection.resetKnifeCount10(i);
+        }
         String jsonData = new Gson().toJson("success");
         response.getWriter().write(jsonData);
     }

@@ -46,31 +46,6 @@ public class listNewElement extends HttpServlet {
 
         }
 
-//        // 消耗品
-//
-//
-//        ret = Server.getInstance().sqlConnection.cmdFetchData(
-//                "SELECT shID,RegisterItem.RiNo,RegisterItem.Name,RegisterItem.filename,SUM(count) as totalCount from RegisterItem INNER JOIN Consumables on RegisterItem.RiNo = Consumables.RiNo INNER JOIN Shelf on RegisterItem.shNo = Shelf.shNo GROUP BY RegisterItem.RiNo",
-//                "RiNo",
-//                "Name",
-//                "filename",
-//                "totalCount",
-//                "shID");
-//        //SELECT RegisterItem.RiNo,RegisterItem.Name,RegisterItem.filename from RegisterItem INNER JOIN Consumables on RegisterItem.RiNo = Consumables.RiNo GROUP BY RegisterItem.RiNo
-//        for (HashMap<String, Object> obj : ret) {
-//            int r_id = (int) obj.get("RiNo");
-//            String name = (String) obj.get("Name");
-//            String filename = (String) obj.get("filename");
-//            String shID = (String) obj.get("shID");
-//            itemData iData = new itemData(r_id, name, filename);
-//            iData.setShelfNo(shID);
-//            iData.setURL("item?type=consum&id=" + r_id);
-//            int ava_count = ((BigDecimal) obj.get("totalCount")).intValue();
-//            iData.setCount(ava_count);
-//            datas.add(iData);
-//
-//        }
-
         String jsonData = new Gson().toJson(datas);
         response.getWriter().write(jsonData);
     }

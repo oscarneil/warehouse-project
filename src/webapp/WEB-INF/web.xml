@@ -63,6 +63,16 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>api_lendNewKnife</servlet-name>
+        <servlet-class>gjt.usblab.API.lendNewKnife</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>api_lendNewKnife</servlet-name>
+        <url-pattern>/api/lendNewKnife</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>pbupdate</servlet-name>
         <servlet-class>gjt.usblab.API.pbUpdateAPI</servlet-class>
     </servlet>

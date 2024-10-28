@@ -442,6 +442,7 @@ if (session.getAttribute("userData") != null ){
                     ! (boolean) session.getAttribute("login") ) { %>
                 <a href="login.jsp">登入</a>
             <% } else {%>
+                <a href="listnewelement.jsp">新刀具借用</a>
                 <a href="listelement.jsp">物品列表</a>
                 <a href="preborrow.jsp">選取表</a>
                 <a href="returnExpensive.jsp">歸還列表</a>
@@ -589,6 +590,15 @@ if (session.getAttribute("userData") != null ){
                 });
 
                 rightButton.addEventListener('click', () => {
+                    $.ajax({
+                        type: "GET",
+                        url: "/main/api/lendNewKnife", // lend new knife
+                        dataType: 'json',
+                        success: function(data) {
+                            console.log("result:"+data);
+                        }
+                    });
+
                     const rightButtonImg  = rightButton.querySelector('.button-image');
                     rightButtonImg.src = "./file/launchKnife.png";
                     const rightButtonText = rightButton.querySelector('.button-text');
@@ -598,6 +608,7 @@ if (session.getAttribute("userData") != null ){
                     rightButton.style.backgroundColor = "#CEFFCE"
                     rightButton.classList.add('buttonDisabledFun');
                 });
+
             </script>
 
             <!-- Modal dialog for lending -->
